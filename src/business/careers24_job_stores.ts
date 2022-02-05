@@ -43,6 +43,7 @@ export class Careers24JobStore {
 
         let platformId: number = await jobStoreRepo.getPlatformInfo(this.platform).then((platform) => platform.platformId);
 
+        console.log('platform id is ' + platformId);
         if (newLinksList.length > 0) {
             let JobStoreList: JobStoreEntity[] = newLinksList.map((link) => {
                 let jsonInput: JSON = JSON.parse(`{"data": "${link}"}`);

@@ -1,13 +1,13 @@
-import logging from "../../config/logging";
 import mysqlPool from "./mysql";
 import Platform from "../domain/platform";
 import {JobStore, JobStoreEntity} from "../domain/job_store";
+import logging from '../config/logging';
 
 const NAMESPACE = 'JobStoreRepo';
 export class JobStoreRepo {
 
     async getJobStoreByJobLinksAndPlatform(jobLinks: string[], platform: string) : Promise<JobStore[]> {
-        let statement = 'select * from `JOB_STORE` inner join `PLATFORM` on `platform_id` = `platform_id` where `link` in ? and `name` = ?';
+        let statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where link in (?) and name = ?';
 
         try {
             const results = await mysqlPool.query(statement, [jobLinks, platform]);
@@ -24,10 +24,10 @@ export class JobStoreRepo {
     }
 
     async saveJobStore(jobStoreList: JobStoreEntity[]) {
-        let statement = 'insert into `JOB_STORE` (`link`, `data`, `platform_id`, `updated_at`) values ?';
+        let statement = 'insert into JOB_STORE (link, data, platform_id, updated_at) values ?';
 
         try {
-            await mysqlPool.query(statement, [jobStoreList]);
+            await mysqlPool.query({sql: statement, values: jobStoreList});
         } catch (error) {
             logging.error(NAMESPACE, 'Failed to insert job store list', error);
             throw error;
@@ -42,10 +42,15 @@ export class JobStoreRepo {
         let platform: Platform;
 
         try {
-            await mysqlPool.query({sql: selectPlatformId, values: platformName}, function(err, [{platformRes}]) {
-                if (err) throw err;
-                platform = platformRes;
-            });
+            const rows = await mysqlPool.query(selectPlatformId, [platformName]);
+            let results : Platform[] = <Platform[]>rows[0];
+
+            if (results.length > 1) {
+                throw new Error('Found many platform Ids, while expecting only one');
+            } else if (results.length < 1) {
+                throw new Error('Could not find platform Id, results empty');
+            }
+            platform = results[0];
         } catch (error) {
             logging.error(NAMESPACE, 'Failed to get platform id', error);
             throw error;
