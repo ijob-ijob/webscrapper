@@ -1,7 +1,8 @@
-import {PlatformType} from '../domain/constant/platform_type';
-import {JobStoreRepo} from "../database/job_store_repo";
+import { PlatformType } from '../domain/constant/platform_type';
+import { JobStoreRepo } from '../database/job_store_repo';
+import { JobStoreEntity } from '../domain/job_store';
 
-export class ImportJobStores {
+export class Careers24JobStore {
 
      platform = PlatformType.CAREERS24;
 
@@ -36,9 +37,26 @@ export class ImportJobStores {
 
         linkLists.forEach(function(link) {
             if (!JobStoreLinksList.includes(link)) {
-                newLinksList.push()
+                newLinksList.push(link);
             }
         });
+
+        let platformId: number = await jobStoreRepo.getPlatformInfo(this.platform).then((platform) => platform.platformId);
+
+        if (newLinksList.length > 0) {
+            let JobStoreList: JobStoreEntity[] = newLinksList.map((link) => {
+                let jsonInput: JSON = JSON.parse(`{"data": "${link}"}`);
+                let jobStoreEntity: JobStoreEntity = {
+                    jobStoreId: null,
+                    link: link,
+                    platformId: platformId,
+                    updatedAt: new Date().toString(),
+                    data: jsonInput,
+                };
+                return jobStoreEntity;
+            });
+            await jobStoreRepo.saveJobStore(JobStoreList);
+        }
 
     }
 }

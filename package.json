@@ -2,7 +2,7 @@
   "name": "webscrapper",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.ts",
+  "main": "dist/app.js",
   "scripts": {
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",

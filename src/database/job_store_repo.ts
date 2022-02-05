@@ -1,6 +1,7 @@
-import JobStore from "../domain/job_store";
 import logging from "../../config/logging";
 import mysqlPool from "./mysql";
+import Platform from "../domain/platform";
+import {JobStore, JobStoreEntity} from "../domain/job_store";
 
 const NAMESPACE = 'JobStoreRepo';
 export class JobStoreRepo {
@@ -22,7 +23,38 @@ export class JobStoreRepo {
         }
     }
 
-    async saveJobStore(jobStoreList: JobStore[]) {
+    async saveJobStore(jobStoreList: JobStoreEntity[]) {
+        let statement = 'insert into `JOB_STORE` (`link`, `data`, `platform_id`, `updated_at`) values ?';
 
+        try {
+            await mysqlPool.query(statement, [jobStoreList]);
+        } catch (error) {
+            logging.error(NAMESPACE, 'Failed to insert job store list', error);
+            throw error;
+        }
+
+        logging.info(NAMESPACE, 'Successfully inserted job store list');
+    }
+
+    async getPlatformInfo(platformName: string) : Promise<Platform> {
+        let selectPlatformId = 'select * from  `PLATFORM` where `name` = ?';
+
+        let platform: Platform;
+
+        try {
+            await mysqlPool.query({sql: selectPlatformId, values: platformName}, function(err, [{platformRes}]) {
+                if (err) throw err;
+                platform = platformRes;
+            });
+        } catch (error) {
+            logging.error(NAMESPACE, 'Failed to get platform id', error);
+            throw error;
+        }
+
+        if (!platform) {
+            throw new Error('Failed to get platform id');
+        }
+
+        return platform;
     }
 }
