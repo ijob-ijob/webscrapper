@@ -61,7 +61,7 @@ export class PlatformRepo {
                 }
             })
 
-            logging.info(NAMESPACE, 'Finished getting all active platforms with identifiers', platSchedConfList)
+           // logging.info(NAMESPACE, 'Finished getting all active platforms with identifiers', platSchedConfList)
             return platSchedConfList
         } catch (error) {
             logging.error(NAMESPACE, 'An error occured while fetching all active platforms with idenfifiers')
@@ -85,7 +85,7 @@ export class PlatformRepo {
                 }
             })
 
-            logging.info(NAMESPACE, 'Finished getting all active platforms', platformList)
+            //logging.info(NAMESPACE, 'Finished getting all active platforms', platformList)
             return platformList
         } catch (error) {
             logging.error(NAMESPACE, 'An error occured while fetching all active platforms')

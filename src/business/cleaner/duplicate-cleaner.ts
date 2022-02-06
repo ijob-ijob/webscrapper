@@ -18,12 +18,12 @@ export class DuplicateCleaner {
                 .then((jobStoreDuplicateListRes: JobStoreEntity[]) => {
                     duplicateJobStoreList.push(...jobStoreDuplicateListRes)
                 }).catch((error) => {
-                logging.error(NAMESPACE, 'An error occured while fetching duplocate job stores', error)
+               // logging.error(NAMESPACE, 'An error occured while fetching duplocate job stores', error)
                 return reject(new Error(`An error occured while fetching duplicate job stores for ${NAMESPACE}::error::${error}`))
             })
 
             if (duplicateJobStoreList.length === 0) {
-                logging.info(NAMESPACE, 'No duplicate job stores found for processing')
+               // logging.info(NAMESPACE, 'No duplicate job stores found for processing')
                 return resolve()
             }
 
@@ -41,19 +41,19 @@ export class DuplicateCleaner {
                 await this.glabalContainer.getRepoContainer()
                     .getDetailsStoreJobRepo().updateJobStoreAndDeleteJobDetailsDuplicates(duplicateJobStoreList)
                     .then(() => {
-                        logging.info(NAMESPACE, 'Finished processing duplicates')
+                       // logging.info(NAMESPACE, 'Finished processing duplicates')
                         return resolve()
                     }).catch((error) => {
-                        logging.error(NAMESPACE, 'An error occured while processing duplicate job store/details')
+                        //logging.error(NAMESPACE, 'An error occured while processing duplicate job store/details')
                     return reject(new Error(`An error occured while processing duplocate job store/details::${error}`))
                 })
             } else {
                 await this.glabalContainer.getRepoContainer().getJobStoreRepo().updateJobStoreBulk(duplicateJobStoreList)
                     .then(() => {
-                        logging.info(NAMESPACE, 'Successfully updated duplicate job stores')
+                       // logging.info(NAMESPACE, 'Successfully updated duplicate job stores')
                         return resolve()
                     }).catch((error) => {
-                        logging.error(NAMESPACE, 'An error occured while updating job store duplicates')
+                      // logging.error(NAMESPACE, 'An error occured while updating job store duplicates')
                     return reject(`An error occured while updating job store duplicates, ${NAMESPACE}::error::${error}`)
                 })
             }

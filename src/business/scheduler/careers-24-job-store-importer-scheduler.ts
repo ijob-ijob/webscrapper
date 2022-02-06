@@ -40,7 +40,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
         if (!this.identifier) {
             this.setIdentifier(identifier)
         }
-        logging.info(NAMESPACE, 'STARTING::Careers24JobStoreImporterScheduler')
+       // logging.info(NAMESPACE, 'STARTING::Careers24JobStoreImporterScheduler')
         let scheduledTask: ScheduledTask = schedule(cron,
             () => {
                 if (!this.isProcessingInternal) {
@@ -48,18 +48,18 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
                     this.globalContainer.getImporterContainer().getCareer24JobStoreImporter().import()
                         .then(() => {
                             this.isProcessingInternal = false
-                            logging.info(NAMESPACE, 'Finsihed processing job store import')
+                            //logging.info(NAMESPACE, 'Finsihed processing job store import')
                         }).catch((error) => {
                         this.isProcessingInternal = false
-                        logging.error(NAMESPACE, 'An error occured while processing job store import')
+                        //logging.error(NAMESPACE, 'An error occured while processing job store import')
                     })
                 } else {
-                    logging.info(NAMESPACE, 'RUNNING::Processing job store imports')
+                  //  logging.info(NAMESPACE, 'RUNNING::Processing job store imports')
                 }
             })
 
         this.cronJob = scheduledTask
 
-        logging.info(NAMESPACE, 'STARTED::Careers24JobStoreImporterScheduler')
+        //logging.info(NAMESPACE, 'STARTED::Careers24JobStoreImporterScheduler')
     }
 }

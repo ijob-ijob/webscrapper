@@ -15,6 +15,7 @@ export class Careers24JobDetailsImporter {
     }
 
     public async import(): Promise<void> {
+        console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - start')
         const that = this
         return await new Promise<void>((async (resolve, reject) => {
 
@@ -24,7 +25,8 @@ export class Careers24JobDetailsImporter {
                     platform = platformRes
                 })
                 .catch((error) => {
-                    logging.error(NAMESPACE, `An error occured while getting platform for ${NAMESPACE}`, error)
+                  //  logging.error(NAMESPACE, `An error occured while getting platform for ${NAMESPACE}`, error)
+                    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrooooooooooooooooooooorrrrrrr - 1')
                     return reject(new Error(`An error occured while getting platform record for ${NAMESPACE}, error::${error}`))
                 })
 
@@ -35,7 +37,8 @@ export class Careers24JobDetailsImporter {
                 .then((jobStoreEntityList: JobStoreEntity[]) => {
                     jobStoreList = jobStoreEntityList})
                 .catch((error) => {
-                    logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
+                    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrooooooooooooooooooooorrrrrrr - 2')
+                    //logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
                     return reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
                 })
 
@@ -56,20 +59,24 @@ export class Careers24JobDetailsImporter {
                             jobStoreList[i].status = JobStoreStatusType.PROCESSED
                         })
                         .catch((error) => {
-                            logging.warn(NAMESPACE, 'An occur occured while fetching job details', [jobStoreList[i], error])
+                           // logging.warn(NAMESPACE, 'An occur occured while fetching job details', [jobStoreList[i], error])
                             jobStoreList[i].status = JobStoreStatusType.ERROR
                         })
                 }
             })()
 
+            console.log('ffffffffffffffffffffffffffffffooooooooooooooooooooooooooooooooooooooorrrrrrrrrrrrrrrrrrrrrrr - 1')
+
+
             this.globalContainer.getJobSaverContainer()
                 .getJobDetailsSaver().saveJobDetails(jobDetailsList, jobStoreList)
                 .then(() => {
-                    logging.info(NAMESPACE, 'Successfully saved job details list and/or job store list')
+                   // logging.info(NAMESPACE, 'Successfully saved job details list and/or job store list')
                     return resolve()
                 }).catch((error) => {
-                    logging.error(NAMESPACE, `An error occoured while saving job details list and/or job store list`, error)
-                    return reject(new Error(`An error occured while saving job details list/or job store list for ${NAMESPACE}, error::${error}`))
+                    //logging.error(NAMESPACE, `An error occoured while saving job details list and/or job store list`, error)
+                console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrooooooooooooooooooooorrrrrrr - 3')
+                return reject(new Error(`An error occured while saving job details list/or job store list for ${NAMESPACE}, error::${error}`))
                 })
             return resolve()
         }))

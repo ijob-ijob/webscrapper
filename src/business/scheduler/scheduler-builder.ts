@@ -66,13 +66,13 @@ export class SchedulerBuilder {
 
             switch (schedulerConfPlaform.identifier) {
                 case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                    this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                    //this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
                     this.careers24JobDetailsImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 case SchedulerConfType.DUPLICATECLEANER:
-                    this.duplicateCleanerScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                   // this.duplicateCleanerScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)

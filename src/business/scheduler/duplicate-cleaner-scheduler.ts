@@ -37,7 +37,7 @@ export class DuplicateCleanerScheduler implements Scheduler{
         if (!this.identifier) {
             this.setIdentifier(identifier)
         }
-        logging.info(NAMESPACE, 'STARTING::DuplicateCleanerScheduler')
+       // logging.info(NAMESPACE, 'STARTING::DuplicateCleanerScheduler')
         let scheduledTask: ScheduledTask = schedule(cron,
             () => {
                 if (!this.isProcessingInternal) {
@@ -45,19 +45,19 @@ export class DuplicateCleanerScheduler implements Scheduler{
                     this.globalContainer.getCleanerContainer().getDuplicateCleaner().cleanDuplicates()
                         .then(() => {
                             this.isProcessingInternal = false
-                            logging.info(NAMESPACE, 'Finsihed processing job store/details duplicates')
+                            //logging.info(NAMESPACE, 'Finsihed processing job store/details duplicates')
                         }).catch((error) => {
                         this.isProcessingInternal = false
-                        logging.error(NAMESPACE, 'An error occured while processing store/details duplicates')
+                       // logging.error(NAMESPACE, 'An error occured while processing store/details duplicates')
                     })
                 } else {
-                    logging.info(NAMESPACE, 'RUNNING::Processing job store/details duplicates')
+                   // logging.info(NAMESPACE, 'RUNNING::Processing job store/details duplicates')
                 }
             })
 
         this.cronJob = scheduledTask
 
-        logging.info(NAMESPACE, 'STARTED::DuplicateCleanerScheduler')
+        //logging.info(NAMESPACE, 'STARTED::DuplicateCleanerScheduler')
     }
 
 }

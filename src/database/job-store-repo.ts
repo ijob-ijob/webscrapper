@@ -95,10 +95,10 @@ export class JobStoreRepo {
                         createdAt: jobStoreEntityDb.CREATED_AT
                     }
                 })
-                logging.info(NAMESPACE, 'Finished getting duplicate job stores', jobStoreEntityList)
+                //logging.info(NAMESPACE, 'Finished getting duplicate job stores', jobStoreEntityList)
                 return resolve(jobStoreEntityList)
             } catch (error) {
-                logging.error(NAMESPACE, 'An error occured while getting duplicate store', error)
+              //  logging.error(NAMESPACE, 'An error occured while getting duplicate store', error)
                 return reject(new Error(`An error occured while getting job store duplicates for ${NAMESPACE}:::${error}`))
             }
         })

@@ -37,27 +37,31 @@ export class Careers24JobDetailsImporterScheduler implements Scheduler {
         if (!this.identifier) {
             this.setIdentifier(identifier)
         }
-        logging.info(NAMESPACE, 'STARTING::Careers24JobDetailsImporterScheduler')
+       // logging.info(NAMESPACE, 'STARTING::Careers24JobDetailsImporterScheduler')
         let scheduledTask: ScheduledTask = schedule(cron,
             () => {
+            console.log('*********************************************************************** ' + this.isProcessingInternal)
                 if (!this.isProcessingInternal) {
+                    console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ' + this.isProcessingInternal)
                     this.isProcessingInternal = true
                     this.globalContainer.getImporterContainer().getCareers24JobDetailsImporter().import()
                         .then(() => {
                             this.isProcessingInternal = false
-                            logging.info(NAMESPACE, 'Finsihed processing job details import')
+                            console.log('############################################################## ' + this.isProcessingInternal)
+                            //logging.info(NAMESPACE, 'Finsihed processing job details import')
                         }).catch((error) => {
                         this.isProcessingInternal = false
-                        logging.error(NAMESPACE, 'An error occured while processing job details import')
+                        console.log('------------------------------------------------------------------- ' + this.isProcessingInternal)
+                       // logging.error(NAMESPACE, 'An error occured while processing job details import')
                     })
                 } else {
-                    logging.info(NAMESPACE, 'RUNNING::Processing job details imports')
+                   // logging.info(NAMESPACE, 'RUNNING::Processing job details imports')
                 }
             })
 
         this.cronJob = scheduledTask
 
-        logging.info(NAMESPACE, 'STARTED::Careers24JobDetailsImporterScheduler')
+       // logging.info(NAMESPACE, 'STARTED::Careers24JobDetailsImporterScheduler')
     }
 
 }
