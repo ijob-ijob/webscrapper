@@ -6,11 +6,11 @@ import logging from '../config/logging'
 const NAMESPACE = 'JobStoreRepo'
 export class JobStoreRepo {
 
-  async getJobStoreByJobLinksAndPlatform (jobLinks: string[], platform: string) : Promise<JobStore[]> {
-    const statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where link in (?) and name = ?'
+  async getJobStoreByJobLinksAndPlatform (platform: string) : Promise<JobStore[]> {
+    const statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where updated_at is null and name = ?'
 
     try {
-      const results = await mysqlPool.query(statement, [jobLinks, platform])
+      const results = await mysqlPool.query(statement, [platform])
       return <JobStore[]>results[0]
     } catch (error) {
       logging.error(NAMESPACE, 'An error occurred', error)
@@ -19,7 +19,7 @@ export class JobStoreRepo {
   }
 
   async saveJobStore (jobStoreList: any) {
-    const statement = 'insert into JOB_STORE (link, data, platform_id, updated_at) values ?'
+    const statement = 'insert into JOB_STORE (link, data, platform_id) values ?'
 
     try {
       await mysqlPool.query(statement, [jobStoreList])
