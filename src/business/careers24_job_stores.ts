@@ -30,8 +30,10 @@ export class Careers24JobStore {
 
        const jobStoreRepo: JobStoreRepo = new JobStoreRepo()
 
-       const jobStoreList = await jobStoreRepo.getJobStoreByJobLinksAndPlatform(linkLists, this.platform).then((results) => results)
-       const JobStoreLinksList: string[] = jobStoreList.map((jobStore) => jobStore.link)
+       const jobStoreList = await jobStoreRepo.getJobStoreByJobLinksAndPlatform(linkLists, this.platform)
+
+       console.log(jobStoreList)
+       const JobStoreLinksList: string[] = jobStoreList.map((jobStore) => JSON.parse(JSON.stringify(jobStore)).LINK)
 
        const newLinksList: string[] = []
 
@@ -43,20 +45,19 @@ export class Careers24JobStore {
 
        const platform: Platform = await jobStoreRepo.getPlatformInfo(this.platform)
 
-       console.log('platform id is ' + JSON.stringify(platform))
        if (newLinksList.length > 0) {
-         const JobStoreList: JobStoreEntity[] = newLinksList.map((link) => {
-           const jobStoreEntity: JobStoreEntity = {
-             jobStoreId: null,
-             link: link,
-             platformId: JSON.parse(JSON.stringify(platform)).platformId,
-             updatedAt: new Date().toString(),
-             data: JSON.stringify(`{"link": "${link}"}`)
-           }
-           return jobStoreEntity
+         
+         const jobStoreList = []
+         newLinksList.map((link) => {
+           jobStoreList.push(
+               [link,
+                 JSON.stringify({link : link}),
+                 10000,
+                 new Date().toISOString().slice(0, 19).replace('T', ' ')
+               ]
+           )
          })
-         // console.log(JSON.parse(JSON.stringify(platform)).platformId)
-         await jobStoreRepo.saveJobStore(JobStoreList)
+         await jobStoreRepo.saveJobStore(jobStoreList)
        }
      }
 }

@@ -3,10 +3,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const MYSQL_HOST = process.env.MYSQL_HOST || 'localhost';
-const MYSQL_PORT = process.env.MYSQL_PORT || 3307;
+const MYSQL_PORT = process.env.MYSQL_PORT || 3306;
 const MYSQL_DATABASE = process.env.MYSQL_DATABASE || 'IJOB_IJOB_DB';
 const MYSQL_USER = process.env.MYSQL_USER || 'root';
-const MYSQL_PASS = process.env.MYSQL_PASSWORD || '';
+const MYSQL_PASS = process.env.MYSQL_PASSWORD || 'root';
 
 const MYSQL = {
     host: MYSQL_HOST,

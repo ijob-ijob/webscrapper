@@ -5,29 +5,24 @@ import logging from '../config/logging'
 
 const NAMESPACE = 'JobStoreRepo'
 export class JobStoreRepo {
+
   async getJobStoreByJobLinksAndPlatform (jobLinks: string[], platform: string) : Promise<JobStore[]> {
     const statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where link in (?) and name = ?'
 
     try {
       const results = await mysqlPool.query(statement, [jobLinks, platform])
-      const jobStores: JobStore[] = []
-      Object.keys(results).forEach(function (key) {
-        const row = results[key]
-        jobStores.push(row)
-      })
-      return jobStores
+      return <JobStore[]>results[0]
     } catch (error) {
       logging.error(NAMESPACE, 'An error occurred', error)
       throw new Error(`Error occurred ${error}`)
     }
   }
 
-  async saveJobStore (jobStoreList: JobStoreEntity[]) {
-    const statement = 'insert into JOB_STORE (link, updated_at, data, platform_id) values ?'
+  async saveJobStore (jobStoreList: any) {
+    const statement = 'insert into JOB_STORE (link, data, platform_id, updated_at) values ?'
 
     try {
-      // console.log(JSON.stringify(jobStoreList))
-      await mysqlPool.query({ sql: statement, values: jobStoreList })
+      await mysqlPool.query(statement, [jobStoreList])
     } catch (error) {
       logging.error(NAMESPACE, 'Failed to insert job store list', error)
       throw error
