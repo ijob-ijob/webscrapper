@@ -23,6 +23,7 @@
     "@types/body-parser": "^1.19.2",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
+    "@types/fb": "^0.0.28",
     "@types/mysql2": "github:types/mysql2",
     "@types/node": "^17.0.14",
     "@types/puppeteer": "^5.4.4",
@@ -38,6 +39,7 @@
   "dependencies": {
     "dotenv": "^15.0.1",
     "express": "^4.17.1",
+    "fb": "^2.0.0",
     "mysql2": "^2.3.3",
     "puppeteer": "^13.1.3"
   }

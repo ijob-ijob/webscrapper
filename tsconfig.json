@@ -5,6 +5,8 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": false,
+    "allowJs": true,
+    "noImplicitAny": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
