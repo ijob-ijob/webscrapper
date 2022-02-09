@@ -1,7 +1,7 @@
 import mysqlPool from './mysql'
+import logging from '../config/logging'
 import Platform from '../domain/platform'
 import { JobStore, JobStoreEntity } from '../domain/job_store'
-import logging from '../config/logging'
 
 const NAMESPACE = 'JobStoreRepo'
 export class JobStoreRepo {
@@ -35,12 +35,11 @@ export class JobStoreRepo {
 
     try {
       await mysqlPool.query(statement, [jobStoreList])
+      logging.info(NAMESPACE, 'Successfully inserted job store list')
     } catch (error) {
       logging.error(NAMESPACE, 'Failed to insert job store list', error)
       throw error
     }
-
-    logging.info(NAMESPACE, 'Successfully inserted job store list')
   }
 
 }

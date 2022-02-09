@@ -1,8 +1,31 @@
 import * as puppeteer from 'puppeteer';
+import { JobDetails } from '../domain/job_details'
 
 export class Careers24Scrapper {
 
     private url = 'https://www.careers24.com/'
+
+    async getJobDetails(jobLink: string): Promise<JobDetails> {
+        return new Promise<JobDetails>(function (resolve, reject) {
+            let jobDetails: JobDetails = {
+                id: 12,
+                title: 'Software Engineer',
+                description: 'Software Engineer',
+                platformId: 34,
+                frontendLink: jobLink,
+                reference: '1000393',
+                salaryMax: 'Negotiable',
+                salaryMin: 'Negotiable',
+                country: 'South Africa',
+                location: 'Johanesburg',
+                closingDate: '22 January 2023',
+                employer: 'Discovery pty ltd',
+                jobStoreId: 23,
+                type: 'Contract'
+            }
+            resolve(jobDetails)
+        })
+    }
 
     async getLinks(): Promise<string[]> {
 
@@ -17,7 +40,7 @@ export class Careers24Scrapper {
         await page.waitForSelector('#pagination');
         const totPages = await page.evaluate('document.querySelector("#pagination").getAttribute("data-total-pages")');
 
-        let linkAccum = [];
+        let linkAccum: string[] = [];
 
         //todo use totPages here
         for (let i = 0; i < totPages; i++) {
@@ -48,10 +71,10 @@ export class Careers24Scrapper {
         return linkAccum;;
     }
 
-    private async getPageLinks(page) {
+    private async getPageLinks(page: puppeteer.Page) {
         const divSearchResultsSelector = 'divSearchResults';
         return await page.evaluate((divSearchResultsSelector) => {
-            const links = [];
+            const links: string[] = [];
 
             /**
              * div.job-card -> div.row -> div.job-card-head -> aref

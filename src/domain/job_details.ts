@@ -10,7 +10,7 @@ export class JobDetails {
     salaryMax: string
     country: string
     location: string
-    closing_date: string
+    closingDate: string
     employer: string
     jobStoreId: number
     frontendLink: string
