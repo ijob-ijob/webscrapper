@@ -3,6 +3,7 @@ import { JobStoreRepo } from '../database/job_store_repo'
 import { JobStoreEntity } from '../domain/job_store'
 import Platform from '@/domain/platform'
 import { Careers24Scrapper } from './careers24_scrapper'
+import { PlatformRepo } from '../database/platform_repo'
 
 export class Careers24JobStore {
      platform = PlatformType.CAREERS24;
@@ -31,11 +32,13 @@ export class Careers24JobStore {
          }
        })
 
-       const platform: Platform = await jobStoreRepo.getPlatformInfo(this.platform)
+       const platformRepo: PlatformRepo = new PlatformRepo()
+
+       const platform: Platform = await platformRepo.getPlatformInfo(this.platform)
 
        if (newLinksList.length > 0) {
          
-         const jobStoreList = []
+         const jobStoreList: any[] = []
          newLinksList.map((link) => {
            jobStoreList.push(
                [link,
