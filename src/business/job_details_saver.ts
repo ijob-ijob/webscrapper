@@ -61,7 +61,7 @@ export class JobDetailsSaver {
                 reject(`Failed to insert job details list, ${error}`)
             })
 
-            //todo continue to do bulk update
+            //todo continue to do bulk update on job store
         })
 
     }
