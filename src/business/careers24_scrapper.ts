@@ -12,7 +12,7 @@ export class Careers24Scrapper {
                 title: 'Software Engineer',
                 description: 'Software Engineer',
                 platformId: 34,
-                frontendLink: jobLink,
+                link: jobLink,
                 reference: '1000393',
                 salaryMax: 'Negotiable',
                 salaryMin: 'Negotiable',

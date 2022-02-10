@@ -1,5 +1,5 @@
 import { JobDetails } from '../../domain/job_details'
-import { post } from './facebook-sharer'
+const post = require('./facebook-sharer')
 import logging from '../../config/logging'
 
 export class FacebookSharereWrapper {
@@ -11,7 +11,7 @@ export class FacebookSharereWrapper {
     async post(jobDetails: JobDetails) : Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
 
-            let postPromise: Promise<string> = post(this.accessToken, this.pageIdAndFeed, jobDetails.frontendLink)
+            let postPromise: Promise<string> = post(this.accessToken, this.pageIdAndFeed, jobDetails.link)
 
             postPromise.then(function(){
                 logging.info(this.namespace, 'Job details posted successfully', jobDetails)

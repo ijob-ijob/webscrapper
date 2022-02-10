@@ -13,7 +13,7 @@ const NAMESPACE = 'JobDetailsSaver'
 export class JobDetailsSaver {
 
     public async processJobStoreToJobDetails(): Promise<string> {
-        return new Promise<string>(async function (resolve, reject) {
+        return await new Promise<string>(async function (resolve, reject) {
             const jobStoreRepo: JobStoreRepo = new JobStoreRepo();
             let jobStoreList: JobStoreEntity[]
             //change and make this configurable
@@ -35,14 +35,21 @@ export class JobDetailsSaver {
 
             const jobDetailsList: JobDetails[] = []
             for (let i = 0; i < jobStoreList.length; i++) {
-                let platform = this.getPlatorm(jobStoreList[i], platformList)
+
+                let platform: Platform = null
+                platformList.forEach((platformInput) => {
+                    if (platformInput.platformId === jobStoreList[i].platformId) {
+                        platform = platformInput
+                    }
+                })
+
                 if (!platform) {
                     logging.warn(NAMESPACE, 'Could not process job store, no matching platform', jobStoreList[i])
                     continue
                 }
 
                 const careers24Scrapper: Careers24Scrapper = new Careers24Scrapper()
-                switch (platform.name) {
+                switch (JSON.parse(JSON.stringify(platform)).NAME) {
                     case PlatformType.CAREERS24:
                         let jobDetails: JobDetails = await careers24Scrapper.getJobDetails(jobStoreList[i].link)
                         jobDetailsList.push(jobDetails)
@@ -53,27 +60,41 @@ export class JobDetailsSaver {
                 }
             }
 
-            const jobDetailsRepo: JobDetailsRepo = new JobDetailsRepo()
-            await jobDetailsRepo.saveJobDetails(jobDetailsList).then((response) => {
-                logging.info(NAMESPACE, 'Successfully inserted job details')
-            }).catch((error) => {
-                logging.error(NAMESPACE, 'Failed to insert job details list')
-                reject(`Failed to insert job details list, ${error}`)
+            const jobDetailsToBeSavedList: any[] = []
+            jobDetailsList.forEach((jobDetails) => {
+                jobDetailsToBeSavedList.push([
+                    jobDetails.title,
+                    jobDetails.link,
+                    jobDetails.description,
+                    jobDetails.type,
+                    jobDetails.platformId,
+                    jobDetails.reference,
+                    jobDetails.salaryMin,
+                    jobDetails.salaryMax,
+                    jobDetails.country,
+                    jobDetails.location,
+                    jobDetails.closingDate,
+                    jobDetails.employer,
+                    jobDetails.jobStoreId
+                ])
             })
 
-            //todo continue to do bulk update on job store
+            const jobDetailsRepo: JobDetailsRepo = new JobDetailsRepo()
+            await jobDetailsRepo.saveJobDetails(jobDetailsToBeSavedList).then(async (response) => {
+                console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+                logging.info(NAMESPACE, 'Successfully inserted job details')
+
+                console.log('******************************************************************************');
+                await jobStoreRepo.updateJobStoreBulk(jobStoreList)
+            }).catch((error) => {
+                console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                logging.error(NAMESPACE, 'Failed to insert job details list')
+                return reject(`Failed to insert job details list, ${error}`)
+                console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+            })
+
         })
 
-    }
-
-     private getPlatorm(jobStore: JobStoreEntity, platformList: Platform[]): Platform {
-        platformList.forEach((platformInput) => {
-            if (platformInput.platformId === jobStore.platformId) {
-               return platformInput
-            }
-        })
-
-        return null
     }
 
 }

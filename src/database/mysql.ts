@@ -7,7 +7,8 @@ const pool: Pool = createPool({
   database: config.mysql.database,
   port: +config.mysql.port,
   user: config.mysql.user,
-  password: config.mysql.password
+  password: config.mysql.password,
+  multipleStatements: true
 })
 
 const mysqlPool: PromisePool = pool.promise()

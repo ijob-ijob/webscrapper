@@ -13,5 +13,5 @@ export class JobDetails {
     closingDate: string
     employer: string
     jobStoreId: number
-    frontendLink: string
+    link: string
 }

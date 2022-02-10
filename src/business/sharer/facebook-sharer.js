@@ -1,6 +1,6 @@
 let FB = require('fb')
 
-export function post(token: string, pageIdAndFeed: string, jobPostLink: string): Promise<string> {
+module.exports = function post(token, pageIdAndFeed, jobPostLink) {
     let promise = new Promise(function(resolve, reject) {
         FB.api(
             pageIdAndFeed,
