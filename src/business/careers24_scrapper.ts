@@ -1,30 +1,54 @@
 import * as puppeteer from 'puppeteer';
 import { JobDetails } from '../domain/job_details'
+import { format } from 'fecha'
+import logging from '../config/logging'
 
+const NAMESPACE = 'Careers24Scrapper'
 export class Careers24Scrapper {
 
+    //todo get from the database or cache
     private url = 'https://www.careers24.com/'
 
-    async getJobDetails(jobLink: string): Promise<JobDetails> {
-        return new Promise<JobDetails>(function (resolve, reject) {
-            let jobDetails: JobDetails = {
-                id: 12,
-                title: 'Software Engineer',
-                description: 'Software Engineer',
-                platformId: 34,
-                link: jobLink,
-                reference: '1000393',
-                salaryMax: 'Negotiable',
-                salaryMin: 'Negotiable',
-                country: 'South Africa',
-                location: 'Johanesburg',
-                closingDate: '22 January 2023',
-                employer: 'Discovery pty ltd',
-                jobStoreId: 23,
-                type: 'Contract'
-            }
-            resolve(jobDetails)
-        })
+    async getJobDetails(jobLink: string, jobStoreId: number, platformId: number): Promise<JobDetails> {
+       return await new Promise<JobDetails>(async function (resolve, reject) {
+           try {
+               const browser = await puppeteer.launch()
+               const page = await browser.newPage()
+               await page.goto(jobLink);
+
+               await page.waitForSelector('h1.mb-0 > span:nth-child(2)')
+               const title = await page.$$eval('h1.mb-0 > span:nth-child(2)', (inputs) => inputs.map(input => input.textContent));
+               const location = await page.$$eval('.small-text > li:nth-child(1) > a:nth-child(2)', (inputs) => inputs.map((input) => input.textContent));
+               const type = await page.$$eval('.small-text > li:nth-child(3)', (inputs) => inputs.map((input) => input.textContent));
+               const employer = await page.$$eval('p.mb-15:nth-child(2) > a:nth-child(1)', (inputs) => inputs.map((input) => input.textContent));
+               const reference = await page.$$eval('.small-text > li:nth-child(6)', (inputs) => inputs.map((input) => input.textContent));
+               const closingDate = await page.$$eval('.smallest-text > div:nth-child(1) > p:nth-child(1)', (inputs) => inputs.map((input) => input.textContent));
+               const salary = await page.$$eval('li.elipses:nth-child(2)', (inputs) => inputs.map((input) => {
+                   let text  = input.textContent
+                   return text.substring(text.indexOf(':') + 1).trim()
+               }));
+
+               let jobDetails: JobDetails = {
+                   id: null,
+                   title: title[0],
+                   type: type[0],
+                   platformId,
+                   reference: reference.toString().substring(reference.toString().indexOf(':') + 1).trim(),
+                   salaryMin: salary.toString().replace( /[\r\n]+/gm, "" ),
+                   salaryMax: salary.toString().replace( /[\r\n]+/gm, "" ),
+                   location: location[0],
+                   closingDate: closingDate.toString().substring(closingDate.toString().indexOf('before') + 6, closingDate.toString().indexOf('|')).trim(),
+                   employer: employer[0],
+                   jobStoreId: jobStoreId,
+                   link: jobLink
+               }
+
+               return resolve(jobDetails)
+           } catch (error) {
+             logging.error(NAMESPACE, 'An error occured while getting job details', [jobLink, jobStoreId, error])
+             return reject(`An error occured while scrapping job details ${error}, ${jobLink}, ${jobStoreId}`)
+           }
+       })
     }
 
     async getLinks(): Promise<string[]> {
@@ -56,17 +80,7 @@ export class Careers24Scrapper {
 
             await page.waitForXPath("/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a");
             await page.click(nextPageClickSelector);
-            console.log(unfilteredLinksList)
         }
-
-        // let jobTitleList: string[] = [];
-        // for (let j = 0; j < linkAccum.length; j++) {
-        //     await page.goto(linkAccum[j]);
-        //     await page.waitForSelector('h1.mb-0 > span:nth-child(2)');
-        //
-        //     const jobTitle = await page.$$eval('h1.mb-0 > span:nth-child(2)', (inputs) => inputs.map(input => input.textContent));
-        //     jobTitleList.push(...jobTitle);
-        // }
 
         return linkAccum;;
     }

@@ -12,7 +12,9 @@ export class JobStoreRepo {
 
         try {
             const results = await mysqlPool.query(statement, [platform])
-            return <JobStore[]>results[0]
+            const jobDetailsList = <JobStore[]>results[0]
+            logging.info(NAMESPACE, 'Finished getting job store by links and platfirm', jobDetailsList)
+            return jobDetailsList
         } catch (error) {
             logging.error(NAMESPACE, 'An error occurred', error)
             throw new Error(`Error occurred ${error}`)
@@ -24,7 +26,9 @@ export class JobStoreRepo {
 
         try {
             const results = await mysqlPool.query(statement, [limit]);
-            return <JobStoreEntity[]>results[0]
+            const jobStoreEntityList = <JobStoreEntity[]>results[0]
+            logging.info(NAMESPACE, 'Finished getting job store not processed', jobStoreEntityList)
+            return jobStoreEntityList
         } catch (error) {
             logging.error(NAMESPACE, 'An error occured while getting unprocessed job stores')
             throw new Error(`An error occured while geting unprocessed job stores ${error}`)
@@ -49,16 +53,16 @@ export class JobStoreRepo {
 
     async updateJobStoreBulk(jobStoreList: JobStoreEntity[]): Promise<string> {
 
-        let params: any[] = jobStoreList.map((jobStore) => {
+        let params = jobStoreList.map((jobStore) => {
             return {
-                "jobStoreId": jobStore.jobStoreId,
-                "updatedAt": new Date().toDateString()
+                "jobStoreId": JSON.parse(JSON.stringify(jobStore)).JOB_STORE_ID,
+                "updatedAt": new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
         })
 
         let statements = ''
         params.forEach((param) => {
-            statements += `update JOB_STORE set updated_at = ${param.updatedAt} where job_store_id = ${param.updatedAt};`
+            statements += `update JOB_STORE set updated_at = \"${param.updatedAt}\" where job_store_id = ${param.jobStoreId};`
         })
 
         return await new Promise<string>(async function (resolve, reject) {

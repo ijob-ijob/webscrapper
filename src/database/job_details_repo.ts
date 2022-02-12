@@ -6,12 +6,7 @@ const NAMESPACE = 'JobDetailsRepo'
 export class JobDetailsRepo {
 
     async saveJobDetails(jobDetailsList: any[]): Promise<string> {
-        const statement = `insert into JOB_DETAILS 
-                           (
-                               title, link, description, type, platform_id, reference,
-                               salary_min, salary_max, country, location, closing_date, employer, job_store_id  
-                           )
-                           values ?`
+        const statement = `insert into JOB_DETAILS (title, link, type, platform_id, reference, salary_min, salary_max, location, closing_date, employer, job_store_id) values ?`
 
         return await new Promise<string>(async function (resolve, reject) {
             try {

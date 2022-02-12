@@ -1,11 +1,12 @@
-import { JobStoreEntity } from '../domain/job_store'
+import { JobStoreEntity, JobStore } from '../domain/job_store'
 import { JobStoreRepo } from '../database/job_store_repo'
 import { PlatformRepo } from '../database/platform_repo'
-import Platform from '../domain/platform'
 import { PlatformType } from '../domain/constant/platform_type'
 import { JobDetails } from '../domain/job_details'
 import { Careers24Scrapper } from '../business/careers24_scrapper'
 import { JobDetailsRepo } from '../database/job_details_repo'
+import { format } from 'fecha';
+import Platform from '../domain/platform'
 
 import logging from '../config/logging'
 
@@ -14,6 +15,7 @@ export class JobDetailsSaver {
 
     public async processJobStoreToJobDetails(): Promise<string> {
         return await new Promise<string>(async function (resolve, reject) {
+
             const jobStoreRepo: JobStoreRepo = new JobStoreRepo();
             let jobStoreList: JobStoreEntity[]
             //change and make this configurable
@@ -51,8 +53,15 @@ export class JobDetailsSaver {
                 const careers24Scrapper: Careers24Scrapper = new Careers24Scrapper()
                 switch (JSON.parse(JSON.stringify(platform)).NAME) {
                     case PlatformType.CAREERS24:
-                        let jobDetails: JobDetails = await careers24Scrapper.getJobDetails(jobStoreList[i].link)
-                        jobDetailsList.push(jobDetails)
+                        try {
+                            let jobDetails: JobDetails = await careers24Scrapper.getJobDetails(
+                                JSON.parse(JSON.stringify(jobStoreList[i])).LINK,
+                                JSON.parse(JSON.stringify(jobStoreList[i])).JOB_STORE_ID,
+                                JSON.parse(JSON.stringify(platform)).PLATFORM_ID)
+                            jobDetailsList.push(jobDetails)
+                        } catch (error) {
+                            logging.warn(NAMESPACE, 'An occur occured while fetching job details', error)
+                        }
                     break
                     default:
                         logging.warn(NAMESPACE, 'No job details implementation found', [jobStoreList[i], platform])
@@ -65,13 +74,11 @@ export class JobDetailsSaver {
                 jobDetailsToBeSavedList.push([
                     jobDetails.title,
                     jobDetails.link,
-                    jobDetails.description,
                     jobDetails.type,
                     jobDetails.platformId,
                     jobDetails.reference,
                     jobDetails.salaryMin,
                     jobDetails.salaryMax,
-                    jobDetails.country,
                     jobDetails.location,
                     jobDetails.closingDate,
                     jobDetails.employer,
@@ -79,20 +86,21 @@ export class JobDetailsSaver {
                 ])
             })
 
-            const jobDetailsRepo: JobDetailsRepo = new JobDetailsRepo()
-            await jobDetailsRepo.saveJobDetails(jobDetailsToBeSavedList).then(async (response) => {
-                console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-                logging.info(NAMESPACE, 'Successfully inserted job details')
-
-                console.log('******************************************************************************');
-                await jobStoreRepo.updateJobStoreBulk(jobStoreList)
-            }).catch((error) => {
-                console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                logging.error(NAMESPACE, 'Failed to insert job details list')
-                return reject(`Failed to insert job details list, ${error}`)
-                console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-            })
-
+            if (jobDetailsToBeSavedList.length > 0) {
+                const jobDetailsRepo: JobDetailsRepo = new JobDetailsRepo()
+                await jobDetailsRepo.saveJobDetails(jobDetailsToBeSavedList).then(async (response) => {
+                    logging.info(NAMESPACE, 'Successfully inserted job details')
+                    await jobStoreRepo.updateJobStoreBulk(jobStoreList).then(() => {
+                        logging.info(NAMESPACE, 'successfully updated job store bulk')
+                    }).catch((error) => {
+                        logging.error(NAMESPACE, 'An error occured while updating bulk job store')
+                        return reject(`Failed to update job store bulk ${error}`)
+                    })
+                }).catch((error) => {
+                    logging.error(NAMESPACE, 'Failed to insert job details list')
+                    return reject(`Failed to insert job details list, ${error}`)
+                })
+            }
         })
 
     }
