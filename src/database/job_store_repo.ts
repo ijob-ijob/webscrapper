@@ -1,7 +1,7 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
-import Platform from '../domain/platform'
-import { JobStore, JobStoreEntity } from '../domain/job_store'
+import { Platform } from '../domain/platform'
+import { JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb } from '../domain/job_store'
 
 const NAMESPACE = 'JobStoreRepo'
 
@@ -12,7 +12,8 @@ export class JobStoreRepo {
 
         try {
             const results = await mysqlPool.query(statement, [platform])
-            const jobDetailsList = <JobStore[]>results[0]
+            const jobDetailsDbList: JobStoreDb[] = <JobStoreDb[]>results[0]
+            const jobDetailsList: JobStore[] = jobDetailsDbList.map((jobDetailsDb) => jobDetailsDb.jobStore())
             logging.info(NAMESPACE, 'Finished getting job store by links and platfirm', jobDetailsList)
             return jobDetailsList
         } catch (error) {
@@ -26,7 +27,8 @@ export class JobStoreRepo {
 
         try {
             const results = await mysqlPool.query(statement, [limit]);
-            const jobStoreEntityList = <JobStoreEntity[]>results[0]
+            const jobStoreEntityDbList: JobStoreEntityDb[] = <JobStoreEntityDb[]>results[0]
+            const jobStoreEntityList: JobStoreEntity[] = jobStoreEntityDbList.map((jobStoreEntityDb) => jobStoreEntityDb.jobStoreEntity())
             logging.info(NAMESPACE, 'Finished getting job store not processed', jobStoreEntityList)
             return jobStoreEntityList
         } catch (error) {

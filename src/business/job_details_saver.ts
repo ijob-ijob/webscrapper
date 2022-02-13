@@ -5,8 +5,7 @@ import { PlatformType } from '../domain/constant/platform_type'
 import { JobDetails } from '../domain/job_details'
 import { Careers24Scrapper } from '../business/careers24_scrapper'
 import { JobDetailsRepo } from '../database/job_details_repo'
-import { format } from 'fecha';
-import Platform from '../domain/platform'
+import { Platform } from '../domain/platform'
 
 import logging from '../config/logging'
 

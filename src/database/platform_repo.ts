@@ -1,5 +1,5 @@
 import mysqlPool from './mysql'
-import Platform from '../domain/platform'
+import { Platform } from '../domain/platform'
 import logging from '../config/logging'
 
 const NAMESPACE = 'PlatformRepo'

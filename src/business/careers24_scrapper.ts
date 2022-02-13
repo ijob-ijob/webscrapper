@@ -1,6 +1,5 @@
 import * as puppeteer from 'puppeteer';
 import { JobDetails } from '../domain/job_details'
-import { format } from 'fecha'
 import logging from '../config/logging'
 
 const NAMESPACE = 'Careers24Scrapper'
