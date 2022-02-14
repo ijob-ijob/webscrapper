@@ -24,28 +24,8 @@ export class JobStoreBaseDb {
 
 export class JobStoreEntityDb extends JobStoreBaseDb{
     PLATFORM_ID: number
-
-    public jobStoreEntity(): JobStoreEntity {
-        return {
-            jobStoreId: this.JOB_STORE_ID,
-            link: this.LINK,
-            data: this.DATA,
-            platformId: this.PLATFORM_ID,
-            updatedAt: this.UPDATED_AT
-        }
-    }
 }
 
 export class JobStoreDb extends JobStoreBaseDb {
     PLATFORM: PlatformDb
-
-    public jobStore(): JobStore {
-        return {
-            jobStoreId: this.JOB_STORE_ID,
-            link: this.LINK,
-            data: this.DATA,
-            updatedAt: this.UPDATED_AT,
-            platform: this.PLATFORM.getPlatform()
-        }
-    }
 }

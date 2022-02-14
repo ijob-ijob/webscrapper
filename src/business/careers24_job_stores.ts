@@ -22,7 +22,7 @@ export class Careers24JobStore {
        const jobStoreRepo: JobStoreRepo = new JobStoreRepo()
        const jobStoreList = await jobStoreRepo.getJobStoreByJobLinksAndPlatform(this.platform)
 
-       const JobStoreLinksList: string[] = jobStoreList.map((jobStore) => JSON.parse(JSON.stringify(jobStore)).LINK)
+       const JobStoreLinksList: string[] = jobStoreList.map((jobStore) => jobStore.link)
 
        const newLinksList: string[] = []
 
@@ -43,7 +43,7 @@ export class Careers24JobStore {
            jobStoreList.push(
                [link,
                  JSON.stringify({link : link}),
-                 JSON.parse(JSON.stringify(platform)).PLATFORM_ID
+                   platform.platformId
                ]
            )
          })

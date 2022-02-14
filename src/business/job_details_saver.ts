@@ -50,13 +50,13 @@ export class JobDetailsSaver {
                 }
 
                 const careers24Scrapper: Careers24Scrapper = new Careers24Scrapper()
-                switch (JSON.parse(JSON.stringify(platform)).NAME) {
+                switch (platform.name) {
                     case PlatformType.CAREERS24:
                         try {
                             let jobDetails: JobDetails = await careers24Scrapper.getJobDetails(
-                                JSON.parse(JSON.stringify(jobStoreList[i])).LINK,
-                                JSON.parse(JSON.stringify(jobStoreList[i])).JOB_STORE_ID,
-                                JSON.parse(JSON.stringify(platform)).PLATFORM_ID)
+                                jobStoreList[i].link,
+                                jobStoreList[i].jobStoreId,
+                                platform.platformId)
                             jobDetailsList.push(jobDetails)
                         } catch (error) {
                             logging.warn(NAMESPACE, 'An occur occured while fetching job details', error)

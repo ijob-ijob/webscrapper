@@ -12,14 +12,4 @@ export class PlatformDb {
     TYPE: string
     SUPPORTED_FROM: string
     SUPPORTED_TO: string
-
-    getPlatform(): Platform {
-        return {
-            platformId: this.PLATFORM_ID,
-            name: this.NAME,
-            type: this.TYPE,
-            supportedFrom: this.SUPPORTED_FROM,
-            supportedTo: this.SUPPORTED_TO
-        }
-    }
 }

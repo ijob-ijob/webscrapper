@@ -27,21 +27,4 @@ export class JobDetailsDb {
     EMPLOYER: string
     LINK: string
     JOB_STORE_ID: number
-
-    public getJobDetails(): JobDetails {
-        return {
-            id: this.JOB_DETAILS_ID,
-            type: this.TYPE,
-            title: this.TITLE,
-            platformId: this.PLATFORM_ID,
-            reference: this.REFERENCE,
-            salaryMin: this.SALAMY_MIN,
-            salaryMax: this.SALAMY_MAX,
-            location: this.LOCATION,
-            closingDate: this.CLOSING_DATE,
-            employer: this.EMPLOYER,
-            link: this.LINK,
-            jobStoreId: this.JOB_STORE_ID
-        }
-    }
 }
