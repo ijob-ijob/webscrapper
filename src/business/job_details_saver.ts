@@ -6,10 +6,12 @@ import { JobDetails } from '../domain/job_details'
 import { Careers24Scrapper } from '../business/careers24_scrapper'
 import { JobDetailsRepo } from '../database/job_details_repo'
 import { Platform } from '../domain/platform'
+import { DetailsStoreJobRepo } from '../database/details_store_job_repo'
 
 import logging from '../config/logging'
 
 const NAMESPACE = 'JobDetailsSaver'
+
 export class JobDetailsSaver {
 
     public async processJobStoreToJobDetails(): Promise<string> {
@@ -19,11 +21,11 @@ export class JobDetailsSaver {
             let jobStoreList: JobStoreEntity[]
             //change and make this configurable
             await jobStoreRepo.getJobStoreNotProcessed(5).then((jobStoreEntityList) => {
-                    jobStoreList = jobStoreEntityList
-                }).catch((error) => {
-                    logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
-                    reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
-                })
+                jobStoreList = jobStoreEntityList
+            }).catch((error) => {
+                logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
+                return reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
+            })
 
             const platformRepo: PlatformRepo = new PlatformRepo()
             let platformList: Platform[]
@@ -31,7 +33,7 @@ export class JobDetailsSaver {
                 platformList = allActivePlatformsList
             }).catch((error) => {
                 logging.error(NAMESPACE, 'An error occured while fetching all active platforms')
-                reject(new Error(`An error occurred while fetching all active platforms ${error}`))
+                return reject(new Error(`An error occurred while fetching all active platforms ${error}`))
             })
 
             const jobDetailsList: JobDetails[] = []
@@ -61,10 +63,10 @@ export class JobDetailsSaver {
                         } catch (error) {
                             logging.warn(NAMESPACE, 'An occur occured while fetching job details', error)
                         }
-                    break
+                        break
                     default:
                         logging.warn(NAMESPACE, 'No job details implementation found', [jobStoreList[i], platform])
-                    break
+                        break
                 }
             }
 
@@ -86,19 +88,13 @@ export class JobDetailsSaver {
             })
 
             if (jobDetailsToBeSavedList.length > 0) {
-                const jobDetailsRepo: JobDetailsRepo = new JobDetailsRepo()
-                await jobDetailsRepo.saveJobDetails(jobDetailsToBeSavedList).then(async (response) => {
-                    logging.info(NAMESPACE, 'Successfully inserted job details')
-                    await jobStoreRepo.updateJobStoreBulk(jobStoreList).then(() => {
-                        logging.info(NAMESPACE, 'successfully updated job store bulk')
-                    }).catch((error) => {
-                        logging.error(NAMESPACE, 'An error occured while updating bulk job store')
-                        return reject(`Failed to update job store bulk ${error}`)
+                const detailsStoreJobRepo: DetailsStoreJobRepo = new DetailsStoreJobRepo()
+                await detailsStoreJobRepo.saveJobDetailsAndUpdateJobStore(jobDetailsToBeSavedList, jobStoreList)
+                    .then(() => logging.info(NAMESPACE, 'Successully added job details'))
+                    .catch((error) => {
+                        logging.error(NAMESPACE, `An error occured while saving job details`, error)
+                        return reject(new Error(`An error occured while saving job details, ${error}`))
                     })
-                }).catch((error) => {
-                    logging.error(NAMESPACE, 'Failed to insert job details list')
-                    return reject(`Failed to insert job details list, ${error}`)
-                })
             }
         })
 
