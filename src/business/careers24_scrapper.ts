@@ -20,7 +20,7 @@ export class Careers24Scrapper {
                const location = await page.$$eval('.small-text > li:nth-child(1) > a:nth-child(2)', (inputs) => inputs.map((input) => input.textContent));
                const type = await page.$$eval('.small-text > li:nth-child(3)', (inputs) => inputs.map((input) => input.textContent));
                const employer = await page.$$eval('p.mb-15:nth-child(2) > a:nth-child(1)', (inputs) => inputs.map((input) => input.textContent));
-               const reference = await page.$$eval('.small-text > li:nth-child(6)', (inputs) => inputs.map((input) => input.textContent));
+               const reference = await page.$$eval('.small-text > li:nth-child(7)', (inputs) => inputs.map((input) => input.textContent));
                const closingDate = await page.$$eval('.smallest-text > div:nth-child(1) > p:nth-child(1)', (inputs) => inputs.map((input) => input.textContent));
                const salary = await page.$$eval('li.elipses:nth-child(2)', (inputs) => inputs.map((input) => {
                    let text  = input.textContent
@@ -30,7 +30,7 @@ export class Careers24Scrapper {
                let jobDetails: JobDetails = {
                    id: null,
                    title: title[0],
-                   type: type[0],
+                   type: type[0].toString().substring(reference.toString().indexOf(':') + 1).trim(),
                    platformId,
                    reference: reference.toString().substring(reference.toString().indexOf(':') + 1).trim(),
                    salaryMin: salary.toString().replace( /[\r\n]+/gm, "" ),

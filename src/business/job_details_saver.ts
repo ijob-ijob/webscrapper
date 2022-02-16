@@ -20,7 +20,7 @@ export class JobDetailsSaver {
             const jobStoreRepo: JobStoreRepo = new JobStoreRepo();
             let jobStoreList: JobStoreEntity[]
             //change and make this configurable
-            await jobStoreRepo.getJobStoreNotProcessed(5).then((jobStoreEntityList) => {
+            await jobStoreRepo.getJobStoreNotProcessed(30).then((jobStoreEntityList) => {
                 jobStoreList = jobStoreEntityList
             }).catch((error) => {
                 logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
