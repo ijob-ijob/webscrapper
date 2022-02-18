@@ -1,5 +1,5 @@
-import { JobDetails } from '../domain/job_details'
-import { JobStoreEntity } from '../domain/job_store'
+import { JobDetails } from '../domain/entities/job_details'
+import { JobStoreEntity } from '../domain/entities/job_store'
 import logging from '../config/logging'
 import mysqlPool from '../database/mysql'
 

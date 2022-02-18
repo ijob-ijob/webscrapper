@@ -1,7 +1,7 @@
 import { PlatformType } from '../domain/constant/platform_type'
 import { JobStoreRepo } from '../database/job_store_repo'
-import { JobStoreEntity } from '../domain/job_store'
-import { Platform } from '@/domain/platform'
+import { JobStoreEntity } from '../domain/entities/job_store'
+import { Platform } from '@/domain/entities/platform'
 import { Careers24Scrapper } from './careers24_scrapper'
 import { PlatformRepo } from '../database/platform_repo'
 

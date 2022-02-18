@@ -1,5 +1,5 @@
 import * as puppeteer from 'puppeteer';
-import { JobDetails } from '../domain/job_details'
+import { JobDetails } from '../domain/entities/job_details'
 import logging from '../config/logging'
 
 const NAMESPACE = 'Careers24Scrapper'
