@@ -8,7 +8,7 @@ import { PlatformRepo } from '../database/platform_repo'
 export class Careers24JobStore {
      platform = PlatformType.CAREERS24;
 
-     async importJobStores () {
+     public async importJobStores () {
        /**
          * 1. Get job stores from careers24, 10 items at a time.
          * 2. Retrieve possible matches.

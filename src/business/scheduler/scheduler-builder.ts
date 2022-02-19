@@ -1,31 +1,86 @@
 import { SchedulerConfCronJob } from '../../domain/model/scheduler_conf_cron_job'
 import { SchedulerConfRepo } from '../../database/scheduler_conf_repo'
-import { SchedulerConf } from '../../domain/entities/scheduler_conf'
+import { SchedulerConfPlatform } from '../../domain/entities/scheduler_conf'
 import logging from '../../config/logging'
-import { schedule } from 'node-cron'
+import { schedule, ScheduledTask } from 'node-cron'
+import { JobDetailsSaver } from '../job_details_saver'
+import { SchedulerConfType } from '../../domain/constant/scheduler_conf_types'
+import { Careers24JobStore } from '../careers24_job_stores'
 
 const NAMESPACE = 'SchedulerBuilder'
+
 export class SchedulerBuilder {
 
     public async startAndReturnScheduler(): Promise<SchedulerConfCronJob[]> {
         const schedulerConfRepo: SchedulerConfRepo = new SchedulerConfRepo()
 
+        let that = this
         return await new Promise<SchedulerConfCronJob[]>(function (resolve, reject) {
-            let schedulerConfList: SchedulerConf[] = []
-
             schedulerConfRepo.getActiveSchedularConf()
-                .then((schedulerConfList: SchedulerConf[]) => {
-                    const schedulerConCronJob: SchedulerConfCronJob[] = []
+                .then((schedulerConfPlaformList: SchedulerConfPlatform[]) => {
+                    let schedulerConfCronJobList: SchedulerConfCronJob[] = that.startAndReturnScheduledTasks(schedulerConfPlaformList)
 
-                    for (let i = 0; i < schedulerConfList.length; i++) {
-                        let scheduerConf: SchedulerConf = schedulerConfList[i]
-
-
-                    }
+                    logging.info(NAMESPACE, 'Finished starting and getting scheduler conf', schedulerConfCronJobList)
+                    return resolve(schedulerConfCronJobList)
                 }).catch((error) => {
-                    logging.error(NAMESPACE, 'An error occured while getting all active scheduler conf', error)
-                    return reject(`An error occured whole getting all active scheduler conf, ${error}`)
-                })
+                logging.error(NAMESPACE, 'An error occured while getting and starting scheduler conf', error)
+                return reject(`An error occured whole getting and starting scheduler conf, ${error}`)
+            })
         })
+    }
+
+    private startAndReturnScheduledTasks(schdulerConfPlatformList: SchedulerConfPlatform[]): SchedulerConfCronJob[] {
+        let schedulerConfCronJobList: SchedulerConfCronJob[] = []
+
+        for (let i = 0; i < schdulerConfPlatformList.length; i++) {
+            let schedulerConfPlaform: SchedulerConfPlatform = schdulerConfPlatformList[i]
+
+            switch (schedulerConfPlaform.identifier) {
+                case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
+                    schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
+                    break
+                case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
+                    schedulerConfCronJobList.push(this.buildAndReturnImportJobStoresCronJob(schedulerConfPlaform))
+                default:
+                    logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
+                    break
+            }
+        }
+
+        logging.info(NAMESPACE, 'Finished starting and returning scheduled tasks', schdulerConfPlatformList)
+        return schedulerConfCronJobList
+    }
+
+    private buildAndReturnImportJobStoresCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
+        const careers24JobStore: Careers24JobStore = new Careers24JobStore();
+
+        let scheduledTask: ScheduledTask = schedule(schedulerConfPlatform.cron, () => careers24JobStore.importJobStores()
+            .then((res) => console.log(res))
+            .catch((error) => console.log(`An error happened ${error}`)))
+
+        let schedulerConfCronJob: SchedulerConfCronJob = {
+            cronJob: scheduledTask,
+            schedulerConfPlatform: schedulerConfPlatform
+        }
+
+        logging.info(NAMESPACE, 'Finished building and returning import job stores cron job', schedulerConfCronJob)
+        return schedulerConfCronJob
+    }
+
+    private buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
+        const jobDetailsSaver: JobDetailsSaver = new JobDetailsSaver()
+
+        let scheduledTask: ScheduledTask = schedule(schedulerConfPlatform.cron,
+            () => jobDetailsSaver.processJobStoreToJobDetails()
+                .then((res) => console.log(res))
+                .catch((error) => console.log(`An error happened ${error}`)))
+
+        let schedulerConfCronJob: SchedulerConfCronJob = {
+            cronJob: scheduledTask,
+            schedulerConfPlatform: schedulerConfPlatform
+        }
+
+        logging.info(NAMESPACE, 'Finished building and returning process store to job details cron job', schedulerConfCronJob)
+        return schedulerConfCronJob
     }
 }

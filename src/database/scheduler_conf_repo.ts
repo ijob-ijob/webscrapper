@@ -1,23 +1,38 @@
-import { SchedulerConf, SchedulerConfDb } from '../domain/entities/scheduler_conf'
+import { SchedulerConfPlatform, SchedulerConfPlatformDb } from '../domain/entities/scheduler_conf'
 import logging from '../config/logging'
 import mysqlPool from './mysql'
 
 const NAMESPACE = 'SchedulerConfRepo'
 export class SchedulerConfRepo {
 
-    public async getActiveSchedularConf(): Promise<SchedulerConf[]> {
-        const statement = 'select * from SCHEDULER_CONF where SUPPORTED_TO is null'
+    public async getActiveSchedularConf(): Promise<SchedulerConfPlatform[]> {
+        const statement = `select
+                                SCHEDULER_CONFIG_ID, 
+                                CRON, 
+                                PLATFORM_ID, 
+                                SUPPORTED_FROM, 
+                                SUPPORTED_TO, 
+                                DESCRIPTION, 
+                                TYPE, 
+                                NAME
+                          from SCHEDULER_CONF inner join PLATFORM 
+                          on SCHEDULER_CONF.PLATFORM_ID = PLATFORM.PLATFORM_ID
+                          where SCHEDULER_CONF.SUPPORTED_TO is null 
+                          and PLATFORM.SUPPORTED_TO is null`
 
         try {
             const rows = await mysqlPool.query(statement)
-            const schedularConfDbList: SchedulerConfDb[] = <SchedulerConfDb[]>rows[0]
-            const schedulerConfList: SchedulerConf[] = schedularConfDbList.map((schedularConfDb) => {
+            const schedularConfPlatformDbList: SchedulerConfPlatformDb[] = <SchedulerConfPlatformDb[]>rows[0]
+            const schedulerConfList: SchedulerConfPlatform[] = schedularConfPlatformDbList.map((schedularConfPlatfromDb) => {
                 return {
-                    schedulerConfId: schedularConfDb.SCHEDULER_CONFIG_ID,
-                    cron: schedularConfDb.CRON,
-                    platformId: schedularConfDb.PLATFORM_ID,
-                    supportedFrom: schedularConfDb.SUPPORTED_FROM,
-                    supportedTo: schedularConfDb.SUPPORTED_TO
+                    schedulerConfId: schedularConfPlatfromDb.SCHEDULER_CONFIG_ID,
+                    cron: schedularConfPlatfromDb.CRON,
+                    platformId: schedularConfPlatfromDb.PLATFORM_ID,
+                    supportedFrom: schedularConfPlatfromDb.SUPPORTED_FROM,
+                    supportedTo: schedularConfPlatfromDb.SUPPORTED_TO,
+                    description: schedularConfPlatfromDb.DESCRIPTION,
+                    type: schedularConfPlatfromDb.TYPE,
+                    name: schedularConfPlatfromDb.NAME
                 }
             })
 

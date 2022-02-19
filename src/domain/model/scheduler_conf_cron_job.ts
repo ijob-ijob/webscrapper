@@ -1,6 +1,7 @@
-import { SchedulerConf } from '../entities/scheduler_conf'
+import { SchedulerConfPlatform } from '../entities/scheduler_conf'
+import { ScheduledTask } from 'node-cron'
 
 export interface SchedulerConfCronJob {
-    schedulerConf: SchedulerConf
-    cronJob: any
+    schedulerConfPlatform: SchedulerConfPlatform
+    cronJob: ScheduledTask
 }
