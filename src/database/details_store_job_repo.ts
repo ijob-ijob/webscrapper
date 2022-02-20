@@ -18,13 +18,14 @@ export class DetailsStoreJobRepo {
                             let params = jobStoreList.map((jobStore) => {
                                 return {
                                     "jobStoreId": jobStore.jobStoreId,
+                                    "status": jobStore.status,
                                     "updatedAt": new Date().toISOString().slice(0, 19).replace('T', ' ')
                                 }
                             })
 
                             let jobStoreUpdateQuery = ''
                             params.forEach((param) => {
-                                jobStoreUpdateQuery += `update JOB_STORE set updated_at = \"${param.updatedAt}\" where job_store_id = ${param.jobStoreId};`
+                                jobStoreUpdateQuery += `update JOB_STORE set updated_at = \"${param.updatedAt}\", status = \"${param.status}\" where job_store_id = ${param.jobStoreId};`
                             })
 
                             conn.query(jobStoreUpdateQuery)

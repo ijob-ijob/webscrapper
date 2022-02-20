@@ -7,8 +7,10 @@ import { Careers24Scrapper } from '../business/careers24_scrapper'
 import { JobDetailsRepo } from '../database/job_details_repo'
 import { Platform } from '../domain/entities/platform'
 import { DetailsStoreJobRepo } from '../database/details_store_job_repo'
+import { JobStoreStatusType } from '../domain/constant/job_store_status_type'
 
 import logging from '../config/logging'
+import * as Console from "console";
 
 const NAMESPACE = 'JobDetailsSaver'
 
@@ -16,11 +18,11 @@ export class JobDetailsSaver {
 
     public async processJobStoreToJobDetails(): Promise<string> {
         return await new Promise<string>(async function (resolve, reject) {
-
             const jobStoreRepo: JobStoreRepo = new JobStoreRepo();
             let jobStoreList: JobStoreEntity[]
-            //change and make this configurable
-            await jobStoreRepo.getJobStoreNotProcessed(30).then((jobStoreEntityList) => {
+            //todo change and make this configurable
+            console.log('-------------------------------------------------------------------------------- starting here')
+            await jobStoreRepo.getJobStoreNotProcessed(5).then((jobStoreEntityList) => {
                 jobStoreList = jobStoreEntityList
             }).catch((error) => {
                 logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
@@ -60,8 +62,10 @@ export class JobDetailsSaver {
                                 jobStoreList[i].jobStoreId,
                                 platform.platformId)
                             jobDetailsList.push(jobDetails)
+                            jobStoreList[i].status = JobStoreStatusType.PROCESSED
                         } catch (error) {
                             logging.warn(NAMESPACE, 'An occur occured while fetching job details', error)
+                            jobStoreList[i].status = JobStoreStatusType.ERROR
                         }
                         break
                     default:
@@ -94,6 +98,13 @@ export class JobDetailsSaver {
                     .catch((error) => {
                         logging.error(NAMESPACE, `An error occured while saving job details`, error)
                         return reject(new Error(`An error occured while saving job details, ${error}`))
+                    })
+            } else {
+                await jobStoreRepo.updateJobStoreBulk(jobStoreList)
+                    .then(() => logging.info(NAMESPACE, 'Finished updating job store failures'))
+                    .catch((error) => {
+                        logging.error(NAMESPACE, `An error occured while saving job details`, error)
+                        return reject(new Error(`An error occured while updating job store failures`))
                     })
             }
         })

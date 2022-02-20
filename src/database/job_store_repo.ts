@@ -19,6 +19,7 @@ export class JobStoreRepo {
                     link: jobDetailsDb.LINK,
                     data: jobDetailsDb.DATA,
                     updatedAt: jobDetailsDb.UPDATED_AT,
+                    status: jobDetailsDb.STATUS,
                     platform: {
                         platformId: jobDetailsDb.PLATFORM.PLATFORM_ID,
                         name: jobDetailsDb.PLATFORM.NAME,
@@ -37,7 +38,7 @@ export class JobStoreRepo {
     }
 
     async getJobStoreNotProcessed(limit: number): Promise<JobStoreEntity[]> {
-        const statement = 'select * from JOB_STORE where updated_at is null limit ?';
+        const statement = 'select * from JOB_STORE where updated_at is null and status != "ERROR" limit ?';
 
         try {
             const results = await mysqlPool.query(statement, [limit]);
@@ -49,7 +50,8 @@ export class JobStoreRepo {
                     link: jobStoreEntityDb.LINK,
                     data: jobStoreEntityDb.DATA,
                     platformId: jobStoreEntityDb.PLATFORM_ID,
-                    updatedAt: jobStoreEntityDb.UPDATED_AT
+                    updatedAt: jobStoreEntityDb.UPDATED_AT,
+                    status: jobStoreEntityDb.STATUS
                 }
             })
             logging.info(NAMESPACE, 'Finished getting job store not processed', jobStoreEntityList)
@@ -62,7 +64,7 @@ export class JobStoreRepo {
 
     async saveJobStore(jobStoreList: any): Promise<string> {
         return await new Promise<string>(async function (resolve, reject) {
-            const statement = 'insert into JOB_STORE (link, data, platform_id) values ?'
+            const statement = 'insert into JOB_STORE (link, data, platform_id, status) values ?'
 
             try {
                 await mysqlPool.query(statement, [jobStoreList])
@@ -81,13 +83,14 @@ export class JobStoreRepo {
         let params = jobStoreList.map((jobStore) => {
             return {
                 "jobStoreId": jobStore.jobStoreId,
+                "status": jobStore.status,
                 "updatedAt": new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
         })
 
         let statements = ''
         params.forEach((param) => {
-            statements += `update JOB_STORE set updated_at = \"${param.updatedAt}\" where job_store_id = ${param.jobStoreId};`
+            statements += `update JOB_STORE set updated_at = \"${param.updatedAt}\", status = \"${param.status}\" where job_store_id = ${param.jobStoreId};`
         })
 
         return await new Promise<string>(async function (resolve, reject) {

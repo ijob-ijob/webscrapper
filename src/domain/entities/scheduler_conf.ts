@@ -1,6 +1,6 @@
 
 export class SchedulerConfDb {
-    SCHEDULER_CONFIG_ID: number
+    SCHEDULER_CONF_ID: number
     CRON: string
     PLATFORM_ID: number
     DESCRIPTION: string
@@ -20,7 +20,7 @@ export interface SchedulerConf {
 }
 
 export class SchedulerConfPlatformDb {
-    SCHEDULER_CONFIG_ID: number
+    SCHEDULER_CONF_ID: number
     CRON: string
     PLATFORM_ID: number
     DESCRIPTION: string

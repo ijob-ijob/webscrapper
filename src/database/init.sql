@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS JOB_STORE (
     DATA JSON NOT NULL,
     PLATFORM_ID BIGINT NOT NULL,
     UPDATED_AT DATETIME,
+    STATUS VARCHAR(50) NOT NULL,
     PRIMARY KEY (JOB_STORE_ID),
     FOREIGN KEY (PLATFORM_ID) REFERENCES PLATFORM(PLATFORM_ID)
 )AUTO_INCREMENT=10000;
@@ -52,11 +53,11 @@ CREATE TABLE IF NOT EXISTS SCHEDULER_CONF (
     FOREIGN KEY (PLATFORM_ID) REFERENCES PLATFORM(PLATFORM_ID)
 )AUTO_INCREMENT=10000;
 
-INSERT INTO SCHEDULER_CONF (cron, platform_id, supported_from, description)
-VALUES ('* /5 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job details resolver');
+INSERT INTO SCHEDULER_CONF (cron, platform_id, supported_from, description, identifier)
+VALUES ('* /5 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job details resolver', 'CAREERS24JONDETAILSRESOLVER');
 
-INSERT INTO SCHEDULER_CONF(cron, platform_id, supported_from, description)
-VALUES ('* /5 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job store importer');
+INSERT INTO SCHEDULER_CONF(cron, platform_id, supported_from, description, identifier)
+VALUES ('* /5 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job store importer', 'CAREERS24JOBSTOREIMPORTER');
 
 
 INSERT INTO PLATFORM (name, type, supported_from)

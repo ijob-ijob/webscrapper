@@ -5,6 +5,7 @@ export interface JobStoreBase {
     link: string
     updatedAt: string
     data: any
+    status: string
 }
 
 export interface JobStore extends JobStoreBase {
@@ -20,6 +21,7 @@ export class JobStoreBaseDb {
     LINK: string
     DATA: any
     UPDATED_AT: string
+    STATUS: string
 }
 
 export class JobStoreEntityDb extends JobStoreBaseDb{
