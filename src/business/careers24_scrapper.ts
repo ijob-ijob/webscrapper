@@ -10,10 +10,10 @@ export class Careers24Scrapper {
     private url = 'https://www.careers24.com/'
 
     async getJobDetails(jobLink: string, jobStoreId: number, platformId: number): Promise<JobDetails> {
-        return await new Promise<JobDetails>(async function (resolve, reject) {
+        return new Promise<JobDetails>(async function (resolve, reject) {
+            const browser = await puppeteer.launch()
+            const page = await browser.newPage()
             try {
-                const browser = await puppeteer.launch()
-                const page = await browser.newPage()
                 await page.goto(jobLink);
 
                 await page.waitForSelector('h1.mb-0 > span:nth-child(2)')
@@ -43,8 +43,12 @@ export class Careers24Scrapper {
                     link: jobLink
                 }
 
+                page.close()
+                browser.close()
                 return resolve(jobDetails)
             } catch (error) {
+                page.close()
+                browser.close()
                 logging.error(NAMESPACE, 'An error occured while getting job details', [jobLink, jobStoreId, error])
                 return reject({
                     error: error,
@@ -69,24 +73,27 @@ export class Careers24Scrapper {
 
         let linkAccum: string[] = [];
 
-        //todo use totPages here
-        for (let i = 0; i < totPages; i++) {
-            await page.waitForSelector("#divSearchResults");
-            let unfilteredLinksList = await this.getPageLinks(page)
-            for (let j = 0; j < unfilteredLinksList.length; j++) {
-                if (!linkAccum.includes(unfilteredLinksList[j])) {
-                    linkAccum.push(unfilteredLinksList[j]);
+        (async () => {
+            //todo use totPages here
+            for (let i = 0; i < totPages; i++) {
+                await page.waitForSelector("#divSearchResults");
+                let unfilteredLinksList = await this.getPageLinks(page)
+                for (let j = 0; j < unfilteredLinksList.length; j++) {
+                    if (!linkAccum.includes(unfilteredLinksList[j])) {
+                        linkAccum.push(unfilteredLinksList[j]);
+                    }
                 }
+
+                const nextPageClickSelector = 'li.page-item:nth-child(6) > a:nth-child(1)'
+
+                await page.waitForXPath("/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a");
+                await page.click(nextPageClickSelector)
             }
+        })()
 
-            const nextPageClickSelector = 'li.page-item:nth-child(6) > a:nth-child(1)';
-
-            await page.waitForXPath("/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a");
-            await page.click(nextPageClickSelector);
-        }
-
-        return linkAccum;
-        ;
+        page.close()
+        browser.close()
+        return linkAccum
     }
 
     private async getPageLinks(page: puppeteer.Page) {

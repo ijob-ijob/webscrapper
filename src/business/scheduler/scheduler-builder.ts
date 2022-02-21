@@ -1,11 +1,11 @@
-import {SchedulerConfCronJob} from '../../domain/model/scheduler_conf_cron_job'
-import {SchedulerConfRepo} from '../../database/scheduler_conf_repo'
-import {SchedulerConfPlatform} from '../../domain/entities/scheduler_conf'
+import { SchedulerConfCronJob } from '../../domain/model/scheduler_conf_cron_job'
+import { SchedulerConfRepo } from '../../database/scheduler_conf_repo'
+import { SchedulerConfPlatform } from '../../domain/entities/scheduler_conf'
 import logging from '../../config/logging'
-import {schedule, ScheduledTask} from 'node-cron'
-import {JobDetailsSaver} from '../job_details_saver'
-import {SchedulerConfType} from '../../domain/constant/scheduler_conf_types'
-import {Careers24JobStore} from '../careers24_job_stores'
+import { schedule, ScheduledTask } from 'node-cron'
+import { JobDetailsSaver } from '../job_details_saver'
+import { SchedulerConfType } from '../../domain/constant/scheduler_conf_types'
+import { Careers24JobStore } from '../careers24_job_stores'
 
 const NAMESPACE = 'SchedulerBuilder'
 
@@ -40,7 +40,7 @@ export class SchedulerBuilder {
                     schedulerConfCronJobList.push(this.buildAndReturnImportJobStoresCronJob(schedulerConfPlaform))
                     break
                 case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
-                    schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
+                   schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
                     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
@@ -54,7 +54,7 @@ export class SchedulerBuilder {
     private buildAndReturnImportJobStoresCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
         const careers24JobStore: Careers24JobStore = new Careers24JobStore();
 
-        let scheduledTask: ScheduledTask = schedule('*/59 */59 */5 * * *',
+        let scheduledTask: ScheduledTask = schedule('* * */3 * * *',
             () => careers24JobStore.importJobStores()
                 .then(() => {
                     logging.info(NAMESPACE, 'Finsihed processing job store import')
@@ -74,7 +74,7 @@ export class SchedulerBuilder {
     private buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
         const jobDetailsSaver: JobDetailsSaver = new JobDetailsSaver()
 
-        let scheduledTask: ScheduledTask = schedule('*/59 */59 * * * *',
+        let scheduledTask: ScheduledTask = schedule('* * */4 * * *',
             () => jobDetailsSaver.processJobStoreToJobDetails()
                 .then(() => {
                     logging.info(NAMESPACE, 'Finished processing store to details job')

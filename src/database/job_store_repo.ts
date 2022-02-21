@@ -1,7 +1,7 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
-import { Platform } from '../domain/entities/platform'
-import { JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb } from '../domain/entities/job_store'
+import {Platform} from '../domain/entities/platform'
+import {JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb} from '../domain/entities/job_store'
 
 const NAMESPACE = 'JobStoreRepo'
 
@@ -43,17 +43,19 @@ export class JobStoreRepo {
         try {
             const results = await mysqlPool.query(statement, [limit]);
             const jobStoreEntityDbList: JobStoreEntityDb[] = <JobStoreEntityDb[]>results[0]
-            console.log(jobStoreEntityDbList[0].JOB_STORE_ID)
-            const jobStoreEntityList: JobStoreEntity[] = jobStoreEntityDbList.map((jobStoreEntityDb) => {
-                return {
-                    jobStoreId: jobStoreEntityDb.JOB_STORE_ID,
-                    link: jobStoreEntityDb.LINK,
-                    data: jobStoreEntityDb.DATA,
-                    platformId: jobStoreEntityDb.PLATFORM_ID,
-                    updatedAt: jobStoreEntityDb.UPDATED_AT,
-                    status: jobStoreEntityDb.STATUS
-                }
-            })
+            const jobStoreEntityList: JobStoreEntity[] = []
+
+            jobStoreEntityList.push(
+                ...jobStoreEntityDbList.map((jobStoreEntityDb) => {
+                    return {
+                        jobStoreId: jobStoreEntityDb.JOB_STORE_ID,
+                        link: jobStoreEntityDb.LINK,
+                        data: jobStoreEntityDb.DATA,
+                        platformId: jobStoreEntityDb.PLATFORM_ID,
+                        updatedAt: jobStoreEntityDb.UPDATED_AT,
+                        status: jobStoreEntityDb.STATUS
+                    }
+                }))
             logging.info(NAMESPACE, 'Finished getting job store not processed', jobStoreEntityList)
             return jobStoreEntityList
         } catch (error) {
