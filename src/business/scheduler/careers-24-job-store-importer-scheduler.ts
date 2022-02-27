@@ -1,7 +1,7 @@
 import {SchedulerConfCronJob} from '../../domain/model/scheduler_conf_cron_job'
 import {SchedulerConfPlatform} from '../../domain/entities/scheduler_conf'
 import {schedule, ScheduledTask} from 'node-cron'
-import {Careers24JobStore} from '../careers24_job_stores'
+import {Careers24JobDetailsScrapper} from '../scrapper/careers24_job_details_scrapper'
 import logging from '../../config/logging'
 import { Scheduler } from './scheduler'
 import { GlobalContainer } from '../../container/global_container'
@@ -11,12 +11,9 @@ const NAMESPACE = 'Careers24ScrapperScheduler'
 export class Careers24JobStoreImporterScheduler implements Scheduler {
     private isProcessing: boolean
     private schedulerConfCronJob: SchedulerConfCronJob
-    private careers24JobStore: Careers24JobStore
 
 
-    constructor(private globalContainer: GlobalContainer) {
-        this.careers24JobStore = globalContainer.getScrapperContainer()
-    }
+    constructor(private globalContainer: GlobalContainer) {}
 
     public start(): void {
         this.run()
@@ -31,7 +28,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
         let scheduledTask: ScheduledTask = schedule('* * * * *',
             () => {
                 if (!this.isProcessing) {
-                    this.careers24JobStore.importJobStores()
+                    this.globalContainer.getJobSaverContainer().getJobStoreSaver().importJobStores()
                         .then(() => {
                             this.isProcessing = false
                             logging.info(NAMESPACE, 'Finsihed processing job store import')
@@ -45,7 +42,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
 
         let schedulerConfCronJob: SchedulerConfCronJob = {
             cronJob: scheduledTask,
-            schedulerConfPlatform: this.schedulerConfPlatform
+            schedulerConfCronJob: this.schedulerConfCronJob
         }
 
         logging.info(NAMESPACE, 'STARTED::Careers24JobStoreImporterScheduler')

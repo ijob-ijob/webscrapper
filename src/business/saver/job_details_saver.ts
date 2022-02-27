@@ -1,22 +1,26 @@
-import { JobStoreEntity, JobStore } from '../domain/entities/job_store'
-import { JobStoreRepo } from '../database/job_store_repo'
-import { PlatformRepo } from '../database/platform_repo'
-import { PlatformType } from '../domain/constant/platform_type'
-import { JobDetails } from '../domain/entities/job_details'
-import { Careers24Scrapper } from '../business/scrapper/careers24_scrapper'
-import { JobDetailsRepo } from '../database/job_details_repo'
-import { Platform } from '../domain/entities/platform'
-import { DetailsStoreJobRepo } from '../database/details_store_job_repo'
-import { JobStoreStatusType } from '../domain/constant/job_store_status_type'
+import { JobStoreEntity, JobStore } from '../../domain/entities/job_store'
+import { JobStoreRepo } from '../../database/job_store_repo'
+import { PlatformRepo } from '../../database/platform_repo'
+import { PlatformType } from '../../domain/constant/platform_type'
+import { JobDetails } from '../../domain/entities/job_details'
+import { JobDetailsRepo } from '../../database/job_details_repo'
+import { Platform } from '../../domain/entities/platform'
+import { DetailsStoreJobRepo } from '../../database/details_store_job_repo'
+import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
+import { GlobalContainer } from '../../container/global_container'
+import { Careers24JobDetailsScrapper } from '../scrapper/careers24_job_details_scrapper'
 
-import logging from '../config/logging'
+import logging from '../../config/logging'
 import * as Console from "console";
 
 const NAMESPACE = 'JobDetailsSaver'
 
 export class JobDetailsSaver {
 
+    constructor(private globalContainer: GlobalContainer) {}
+
     public async processJobStoreToJobDetails(): Promise<string> {
+        const that = this
         return await new Promise<string>(async function (resolve, reject) {
             const jobStoreRepo: JobStoreRepo = new JobStoreRepo();
             let jobStoreList: JobStoreEntity[]
@@ -28,7 +32,6 @@ export class JobDetailsSaver {
                 return reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
             })
 
-            console.log('********************************************************8')
             if (!jobStoreList || jobStoreList.length == 0) {
                 return resolve('****No job stores to process****')
             }
@@ -57,11 +60,11 @@ export class JobDetailsSaver {
                     continue
                 }
 
-                const careers24Scrapper: Careers24Scrapper = new Careers24Scrapper()
                 switch (platform.name) {
                     case PlatformType.CAREERS24:
                         try {
-                            let jobDetails: JobDetails = await careers24Scrapper.getJobDetails(
+                            const careers24JobDetailsScrapper: Careers24JobDetailsScrapper = that.globalContainer.getScrapperContainer().getCareers24JobDetailsScrapper()
+                            let jobDetails: JobDetails = await careers24JobDetailsScrapper.getJobDetails(
                                 jobStoreList[i].link,
                                 jobStoreList[i].jobStoreId,
                                 platform.platformId)

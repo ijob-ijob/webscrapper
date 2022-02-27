@@ -7,7 +7,7 @@ const NAMESPACE = 'JobStoreRepo'
 
 export class JobStoreRepo {
 
-    async getJobStoreByJobLinksAndPlatform(platform: string): Promise<JobStore[]> {
+    async getJobStoreByPlatformName(platform: string): Promise<JobStore[]> {
         const statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where updated_at is null and name = ?'
 
         try {

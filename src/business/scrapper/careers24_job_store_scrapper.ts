@@ -2,54 +2,78 @@ import { PlatformType } from '../../domain/constant/platform_type'
 import { JobStoreRepo } from '../../database/job_store_repo'
 import { JobStoreEntity } from '../../domain/entities/job_store'
 import { Platform } from '../../domain/entities/platform'
-import { Careers24Scrapper } from './careers24_scrapper'
 import { PlatformRepo } from '../../database/platform_repo'
 import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
+import { launch, Page } from 'puppeteer'
 
 export class Careers24JobStoreScrapper {
     platform = PlatformType.CAREERS24;
+    private url = 'https://www.careers24.com/'
 
-    public async importJobStores() {
-        /**
-         * 1. Get job stores from careers24, 10 items at a time.
-         * 2. Retrieve possible matches.
-         * 3. if match found in possible matches do not add to new list, otherwise add to new list.
-         * 4. Take new list and save it and repeat from step 1.
-         * */
 
-        const careers24Scrapper: Careers24Scrapper = new Careers24Scrapper()
-        const linkLists = await careers24Scrapper.getLinks()
+    async getLinks(): Promise<string[]> {
 
-        const jobStoreRepo: JobStoreRepo = new JobStoreRepo()
-        const jobStoreList = await jobStoreRepo.getJobStoreByJobLinksAndPlatform(this.platform)
+        const browser = await launch()
+        const page = await browser.newPage()
+        await page.goto(this.url);
 
-        const JobStoreLinksList: string[] = jobStoreList.map((jobStore) => jobStore.link)
+        const btnSearchSelector = '#btnSearch'
+        await page.waitForSelector(btnSearchSelector)
+        await page.click(btnSearchSelector)
 
-        const newLinksList: string[] = []
+        await page.waitForSelector('#pagination');
+        const totPages = await page.evaluate('document.querySelector("#pagination").getAttribute("data-total-pages")');
 
-        linkLists.forEach(function (link) {
-            if (!JobStoreLinksList.includes(link)) {
-                newLinksList.push(link)
+        let linkAccum: string[] = [];
+
+        (async () => {
+            console.log('starting for loop to get links')
+            for (let i = 0; i < totPages; i++) {
+                //console.log('1 *******************************')
+                await page.waitForSelector("#divSearchResults");
+                //console.log('2 *******************************')
+                let unfilteredLinksList = await this.getPageLinks(page)
+                console.log(JSON.stringify(unfilteredLinksList))
+                for (let j = 0; j < unfilteredLinksList.length; j++) {
+                    if (!linkAccum.includes(unfilteredLinksList[j])) {
+                        linkAccum.push(unfilteredLinksList[j]);
+                    }
+                }
+
+                const nextPageClickSelector = 'li.page-item:nth-child(6) > a:nth-child(1)'
+
+                await page.waitForXPath("/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a");
+                await page.click(nextPageClickSelector)
             }
-        })
+            console.log('finishing here *******************************')
+            await page.close()
+            await browser.close()
+        })()
 
-        const platformRepo: PlatformRepo = new PlatformRepo()
-
-        const platform: Platform = await platformRepo.getPlatformInfo(this.platform)
-
-        if (newLinksList.length > 0) {
-
-            const jobStoreList: any[] = []
-            newLinksList.map((link) => {
-                jobStoreList.push(
-                    [link,
-                        JSON.stringify({link: link}),
-                        platform.platformId,
-                        JobStoreStatusType.NOT_PROCESSED
-                    ]
-                )
-            })
-            await jobStoreRepo.saveJobStore(jobStoreList)
-        }
+        return linkAccum
     }
+
+    private async getPageLinks(page: Page) {
+        const divSearchResultsSelector = 'divSearchResults';
+        return await page.evaluate((divSearchResultsSelector) => {
+            const links: string[] = [];
+
+            /**
+             * div.job-card -> div.row -> div.job-card-head -> aref
+             */
+            const divSearchResults = document.getElementById(divSearchResultsSelector);
+
+            const eLinks = divSearchResults.querySelectorAll('a');
+            for (let i = 0; i < eLinks.length; i++) {
+                let iElement = eLinks[i].href;
+
+                if (iElement.includes('adverts') && !links.includes(eLinks[i].href)) {
+                    links.push(eLinks[i].href);
+                }
+            }
+
+            return links;
+        }, divSearchResultsSelector);
+    }
+
 }
