@@ -6,22 +6,28 @@ import { schedule, ScheduledTask } from 'node-cron'
 import { JobDetailsSaver } from '../job_details_saver'
 import { SchedulerConfType } from '../../domain/constant/scheduler_conf_types'
 import { Careers24JobStore } from '../careers24_job_stores'
+import { Scheduler } from './scheduler'
+import { Careers24JobStoreImporterScheduler } from './careers-24-job-store-importer-scheduler'
 
 const NAMESPACE = 'SchedulerBuilder'
 
 export class SchedulerBuilder {
 
-    public async startAndReturnScheduler(): Promise<SchedulerConfCronJob[]> {
+    private careers24JobStoreImporterScheduler: Scheduler
+
+    constructor(private careers24JobStore: Careers24JobStore) {
+    }
+
+    public async startAndReturnScheduler(): Promise<void> {
         const schedulerConfRepo: SchedulerConfRepo = new SchedulerConfRepo()
 
         let that = this
-        return await new Promise<SchedulerConfCronJob[]>(function (resolve, reject) {
+        return await new Promise<void>(function (resolve, reject) {
             schedulerConfRepo.getActiveSchedularConf()
                 .then((schedulerConfPlaformList: SchedulerConfPlatform[]) => {
                     let schedulerConfCronJobList: SchedulerConfCronJob[] = that.startAndReturnScheduledTasks(schedulerConfPlaformList)
-
                     logging.info(NAMESPACE, 'Finished starting and getting scheduler conf', schedulerConfCronJobList)
-                    return resolve(schedulerConfCronJobList)
+                    return resolve()
                 }).catch((error) => {
                 logging.error(NAMESPACE, 'An error occured while getting and starting scheduler conf', error)
                 return reject(`An error occured whole getting and starting scheduler conf, ${error}`)
@@ -37,11 +43,12 @@ export class SchedulerBuilder {
 
             switch (schedulerConfPlaform.identifier) {
                 case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                    schedulerConfCronJobList.push(this.buildAndReturnImportJobStoresCronJob(schedulerConfPlaform))
+                    this.careers24JobStoreImporterScheduler = new Careers24JobStoreImporterScheduler(schedulerConfPlaform, this.careers24JobStore)
+                    this.careers24JobStoreImporterScheduler.start()
                     break
-                case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
-                   schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
-                    break
+                // case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
+                //    schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
+                //     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
                     break
@@ -51,30 +58,10 @@ export class SchedulerBuilder {
         return schedulerConfCronJobList
     }
 
-    private buildAndReturnImportJobStoresCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
-        const careers24JobStore: Careers24JobStore = new Careers24JobStore();
-
-        let scheduledTask: ScheduledTask = schedule('* * */3 * * *',
-            () => careers24JobStore.importJobStores()
-                .then(() => {
-                    logging.info(NAMESPACE, 'Finsihed processing job store import')
-                }).catch((error) => {
-                    logging.error(NAMESPACE, 'An error occured while processing job store import')
-                }))
-
-        let schedulerConfCronJob: SchedulerConfCronJob = {
-            cronJob: scheduledTask,
-            schedulerConfPlatform: schedulerConfPlatform
-        }
-
-        logging.info(NAMESPACE, 'Finished building and returning import job stores cron job', schedulerConfCronJob)
-        return schedulerConfCronJob
-    }
-
     private buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlatform: SchedulerConfPlatform): SchedulerConfCronJob {
         const jobDetailsSaver: JobDetailsSaver = new JobDetailsSaver()
 
-        let scheduledTask: ScheduledTask = schedule('* * */4 * * *',
+        let scheduledTask: ScheduledTask = schedule('* * * * *',
             () => jobDetailsSaver.processJobStoreToJobDetails()
                 .then(() => {
                     logging.info(NAMESPACE, 'Finished processing store to details job')

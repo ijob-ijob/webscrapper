@@ -1,12 +1,12 @@
-import { PlatformType } from '../domain/constant/platform_type'
-import { JobStoreRepo } from '../database/job_store_repo'
-import { JobStoreEntity } from '../domain/entities/job_store'
-import { Platform } from '@/domain/entities/platform'
+import { PlatformType } from '../../domain/constant/platform_type'
+import { JobStoreRepo } from '../../database/job_store_repo'
+import { JobStoreEntity } from '../../domain/entities/job_store'
+import { Platform } from '../../domain/entities/platform'
 import { Careers24Scrapper } from './careers24_scrapper'
-import { PlatformRepo } from '../database/platform_repo'
-import { JobStoreStatusType } from '../domain/constant/job_store_status_type'
+import { PlatformRepo } from '../../database/platform_repo'
+import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
 
-export class Careers24JobStore {
+export class Careers24JobStoreScrapper {
     platform = PlatformType.CAREERS24;
 
     public async importJobStores() {
