@@ -29,11 +29,8 @@ export class Careers24JobStoreScrapper {
         (async () => {
             console.log('starting for loop to get links')
             for (let i = 0; i < totPages; i++) {
-                //console.log('1 *******************************')
                 await page.waitForSelector("#divSearchResults");
-                //console.log('2 *******************************')
                 let unfilteredLinksList = await this.getPageLinks(page)
-                console.log(JSON.stringify(unfilteredLinksList))
                 for (let j = 0; j < unfilteredLinksList.length; j++) {
                     if (!linkAccum.includes(unfilteredLinksList[j])) {
                         linkAccum.push(unfilteredLinksList[j]);
@@ -45,7 +42,6 @@ export class Careers24JobStoreScrapper {
                 await page.waitForXPath("/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a");
                 await page.click(nextPageClickSelector)
             }
-            console.log('finishing here *******************************')
             await page.close()
             await browser.close()
         })()

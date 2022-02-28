@@ -6,9 +6,6 @@ const NAMESPACE = 'Careers24Scrapper'
 
 export class Careers24JobDetailsScrapper {
 
-    //todo get from the database or cache
-    private url = 'https://www.careers24.com/'
-
     async getJobDetails(jobLink: string, jobStoreId: number, platformId: number): Promise<JobDetails> {
         return new Promise<JobDetails>(async function (resolve, reject) {
             const browser = await puppeteer.launch()

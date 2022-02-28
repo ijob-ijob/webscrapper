@@ -11,7 +11,8 @@ const NAMESPACE = 'JobStoreSaver'
 
 export class JobStoreSaver {
 
-    constructor(private globalContainer: GlobalContainer) {}
+    constructor(private globalContainer: GlobalContainer) {
+    }
 
     public async importJobStores(): Promise<void> {
 
@@ -26,21 +27,26 @@ export class JobStoreSaver {
                 return reject(new Error(`An error occurred while fetching all active platforms ${error}`))
             })
 
+            let links: string[] = []
             for (let i = 0; i < platformList.length; i++) {
                 switch (platformList[i].name) {
                     case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
+                        const careers24JobStoreScrapper: Careers24JobStoreScrapper = new Careers24JobStoreScrapper()
+                        const linkLists = await careers24JobStoreScrapper.getLinks()
+                        this.processLinksToJobStore(platformList[i], linkLists)
+                            .catch((error) => {
+                                logging.error(NAMESPACE, `An error occured while processing careers24 links to stores`, error)
+                            })
+                            .then(() => {
+                                logging.info(NAMESPACE, `Successfully processed careers24 links to stores`)
+                            })
                         break
                     default:
                         logging.warn(NAMESPACE, 'Found a platform type that has no matching config')
                         break
                 }
             }
-
         }))
-
-        const careers24JobStoreScrapper: Careers24JobStoreScrapper = new Careers24JobStoreScrapper()
-        const linkLists = await careers24JobStoreScrapper.getLinks()
-
     }
 
     private async processLinksToJobStore(platform: Platform, linkLists: string[]): Promise<void> {

@@ -1,17 +1,15 @@
-import {SchedulerConfCronJob} from '../../domain/model/scheduler_conf_cron_job'
-import {SchedulerConfPlatform} from '../../domain/entities/scheduler_conf'
-import {schedule, ScheduledTask} from 'node-cron'
-import {Careers24JobDetailsScrapper} from '../scrapper/careers24_job_details_scrapper'
-import logging from '../../config/logging'
+import { SchedulerConfPlatform } from '../../domain/entities/scheduler_conf'
+import { schedule, ScheduledTask } from 'node-cron'
+import { Careers24JobDetailsScrapper } from '../scrapper/careers24_job_details_scrapper'
 import { Scheduler } from './scheduler'
 import { GlobalContainer } from '../../container/global_container'
+import logging from '../../config/logging'
 
 const NAMESPACE = 'Careers24ScrapperScheduler'
 
 export class Careers24JobStoreImporterScheduler implements Scheduler {
     private isProcessing: boolean
-    private schedulerConfCronJob: SchedulerConfCronJob
-
+    private cronJob: ScheduledTask
 
     constructor(private globalContainer: GlobalContainer) {}
 
@@ -20,7 +18,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
     }
 
     public stop(): void {
-        this.schedulerConfCronJob.cronJob.stop()
+        this.cronJob.stop()
     }
 
     public run(): void {
@@ -40,10 +38,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
                 }
             })
 
-        let schedulerConfCronJob: SchedulerConfCronJob = {
-            cronJob: scheduledTask,
-            schedulerConfCronJob: this.schedulerConfCronJob
-        }
+        this.cronJob = scheduledTask
 
         logging.info(NAMESPACE, 'STARTED::Careers24JobStoreImporterScheduler')
     }
