@@ -8,7 +8,7 @@ import logging from '../../config/logging'
 const NAMESPACE = 'Careers24ScrapperScheduler'
 
 export class Careers24JobStoreImporterScheduler implements Scheduler {
-    private isProcessing: boolean
+    private isProcessing: boolean = false
     private cronJob: ScheduledTask
 
     constructor(private globalContainer: GlobalContainer) {}
@@ -26,9 +26,11 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
         let scheduledTask: ScheduledTask = schedule('* * * * *',
             () => {
             console.log('Came here')
+                console.log(this.isProcessing)
                 if (!this.isProcessing) {
                     console.log('started processing')
-                    this.globalContainer.getJobSaverContainer().getJobStoreSaver().importJobStores()
+                    this.isProcessing = true
+                    this.globalContainer.getImporterContainer().getCareer24JobStoreImporter().import()
                         .then(() => {
                             this.isProcessing = false
                             logging.info(NAMESPACE, 'Finsihed processing job store import')

@@ -15,46 +15,12 @@ export class JobStoreSaver {
     constructor(private globalContainer: GlobalContainer) {
     }
 
-    public async importJobStores(): Promise<void> {
-
-        return await new Promise<void>((async (resolve, reject) => {
-            let platformList: PlatSchedConf[]
-            const platformRepo: PlatformRepo = new PlatformRepo()
-            await platformRepo.getAllActivePlatformsWithIdentifer().then((allActivePlatformsList) => {
-                platformList = allActivePlatformsList
-            }).catch((error) => {
-                logging.error(NAMESPACE, 'An error occured while fetching all active platforms')
-                return reject(new Error(`An error occurred while fetching all active platforms ${error}`))
-            })
-
-            let links: string[] = []
-            for (let i = 0; i < platformList.length; i++) {
-                switch (platformList[i].name) {
-                    case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                        const careers24JobStoreScrapper: Careers24JobStoreScrapper = this.globalContainer.getScrapperContainer().getCareers24JobStoreScrapper()
-                        const linkLists = await careers24JobStoreScrapper.getLinks()
-                        this.processLinksToJobStore(platformList[i], linkLists)
-                            .catch((error) => {
-                                logging.error(NAMESPACE, `An error occured while processing careers24 links to stores`, error)
-                            })
-                            .then(() => {
-                                logging.info(NAMESPACE, `Successfully processed careers24 links to stores`)
-                            })
-                        break
-                    default:
-                        logging.warn(NAMESPACE, 'Found a platform type that has no matching config')
-                        break
-                }
-            }
-        }))
-    }
-
-    private async processLinksToJobStore(platform: PlatSchedConf, linkLists: string[]): Promise<void> {
+    public async processLinksToJobStore(linkLists: string[], platformId: number, platformName: string): Promise<void> {
         return await new Promise<void>((async (resolve, reject) => {
             const jobStoreRepo = this.globalContainer.getRepoContainer().getJobStoreRepo()
 
             const jobStoreList: JobStore[] = []
-            await jobStoreRepo.getJobStoreByPlatformName(platform.name)
+            await jobStoreRepo.getJobStoreByPlatformName(platformName)
                 .then((jobStoreListResults) => jobStoreList.push(...jobStoreListResults))
                 .catch((error) => {
                     logging.error(NAMESPACE, `An error occured while getting job stores by platform`, error)
@@ -78,7 +44,7 @@ export class JobStoreSaver {
                     jobStoreList.push(
                         [link,
                             JSON.stringify({link: link}),
-                            platform.platformId,
+                            platformId,
                             JobStoreStatusType.NOT_PROCESSED
                         ]
                     )

@@ -4,12 +4,11 @@ import { JobStoreEntity } from '../../domain/entities/job_store'
 import { Platform } from '../../domain/entities/platform'
 import { PlatformRepo } from '../../database/platform_repo'
 import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
-import { launch, Page } from 'puppeteer'
+import { puppeteer } from 'puppeteer'
 
 export class Careers24JobStoreScrapper {
     platform = PlatformType.CAREERS24;
     private url = 'https://www.careers24.com/'
-
 
     async getLinks(): Promise<string[]> {
 
@@ -25,7 +24,6 @@ export class Careers24JobStoreScrapper {
         const totPages = await page.evaluate('document.querySelector("#pagination").getAttribute("data-total-pages")');
 
         let linkAccum: string[] = [];
-        console.log(totPages + ' *******************************************')
 
         await (async () => {
             console.log('starting for loop to get links')
