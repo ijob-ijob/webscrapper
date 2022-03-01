@@ -25,7 +25,9 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
         logging.info(NAMESPACE, 'STARTING::Careers24JobStoreImporterScheduler')
         let scheduledTask: ScheduledTask = schedule('* * * * *',
             () => {
+            console.log('Came here')
                 if (!this.isProcessing) {
+                    console.log('started processing')
                     this.globalContainer.getJobSaverContainer().getJobStoreSaver().importJobStores()
                         .then(() => {
                             this.isProcessing = false
@@ -34,7 +36,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
                         logging.error(NAMESPACE, 'An error occured while processing job store import')
                     })
                 } else {
-                    logging.info(NAMESPACE, 'Still busy processing')
+                    logging.info(NAMESPACE, '**********************Still busy processing***********************')
                 }
             })
 

@@ -1,5 +1,6 @@
 import mysqlPool from './mysql'
 import { Platform, PlatformDb } from '../domain/entities/platform'
+import { PlatSchedConfDb, PlatSchedConf } from '../domain/entities/plat_sched_conf'
 import logging from '../config/logging'
 
 const NAMESPACE = 'PlatformRepo'
@@ -38,19 +39,51 @@ export class PlatformRepo {
         }
     }
 
+    public async  getAllActivePlatformsWithIdentifer(): Promise<PlatSchedConf[]> {
+        const statement = ` SELECT DISTINCT PLATFORM.PLATFORM_ID, 
+                                            PLATFORM.NAME, 
+                                            PLATFORM.TYPE, 
+                                            SCHEDULER_CONF.IDENTIFIER
+                            FROM PLATFORM INNER JOIN SCHEDULER_CONF
+                            ON PLATFORM.PLATFORM_ID = SCHEDULER_CONF.PLATFORM_ID
+                            WHERE PLATFORM.SUPPORTED_TO IS NULL
+                            AND SCHEDULER_CONF.SUPPORTED_TO IS NULL;`
+
+        try {
+            const rows = await mysqlPool.query(statement)
+            const platSchedConfDbList: PlatSchedConfDb[] = <PlatSchedConfDb[]>rows[0]
+            console.log(rows[0])
+            const platSchedConfList: PlatSchedConf[] = platSchedConfDbList.map((platformDb) => {
+                return {
+                    platformId: platformDb.PLATFORM_ID,
+                    name: platformDb.NAME,
+                    type: platformDb.TYPE,
+                    identifier: platformDb.IDENTIFIER
+                }
+            })
+
+            logging.info(NAMESPACE, 'Finished getting all active platforms with identifiers', platSchedConfList)
+            return platSchedConfList
+        } catch (error) {
+            logging.error(NAMESPACE, 'An error occured while fetching all active platforms with idenfifiers')
+            throw new Error(`An error occured while fetching all active platforms with identifiers ${error}`)
+        }
+    }
+
     public async getAllActivePlatforms(): Promise<Platform[]> {
         const statement = 'select * from  PLATFORM where supported_to is null'
 
         try {
             const rows = await mysqlPool.query(statement)
             const platformDbList: PlatformDb[] = <PlatformDb[]>rows[0]
+            console.log(rows[0])
             const platformList: Platform[] = platformDbList.map((platformDb) => {
                 return {
                     platformId: platformDb.PLATFORM_ID,
                     name: platformDb.NAME,
                     type: platformDb.TYPE,
                     supportedFrom: platformDb.SUPPORTED_FROM,
-                    supportedTo: platformDb.SUPPORTED_TO
+                    supportedTo: platformDb.SUPPORTED_TO,
                 }
             })
 

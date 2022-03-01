@@ -25,8 +25,9 @@ export class Careers24JobStoreScrapper {
         const totPages = await page.evaluate('document.querySelector("#pagination").getAttribute("data-total-pages")');
 
         let linkAccum: string[] = [];
+        console.log(totPages + ' *******************************************')
 
-        (async () => {
+        await (async () => {
             console.log('starting for loop to get links')
             for (let i = 0; i < totPages; i++) {
                 await page.waitForSelector("#divSearchResults");

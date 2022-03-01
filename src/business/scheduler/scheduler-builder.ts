@@ -26,10 +26,10 @@ export class SchedulerBuilder {
             schedulerConfRepo.getActiveSchedularConf()
                 .then((schedulerConfPlaformList: SchedulerConfPlatform[]) => {
                     that.startAndReturnScheduledTasks(schedulerConfPlaformList)
-                    logging.info(NAMESPACE, 'Finished starting and getting scheduler conf')
+                    //logging.info(NAMESPACE, 'Finished starting and getting scheduler conf')
                     return resolve()
                 }).catch((error) => {
-                logging.error(NAMESPACE, 'An error occured while getting and starting scheduler conf', error)
+                //logging.error(NAMESPACE, 'An error occured while getting and starting scheduler conf', error)
                 return reject(`An error occured whole getting and starting scheduler conf, ${error}`)
             })
         })
@@ -48,11 +48,11 @@ export class SchedulerBuilder {
                 //    schedulerConfCronJobList.push(this.buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlaform))
                 //     break
                 default:
-                    logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
+                    //logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
                     break
             }
         }
-        logging.info(NAMESPACE, 'Finished starting and returning scheduled tasks', schdulerConfPlatformList)
+        //logging.info(NAMESPACE, 'Finished starting and returning scheduled tasks', schdulerConfPlatformList)
     }
 
     private buildAndReturnProcessJobStoreToJobDetailsCronJob(schedulerConfPlatform: SchedulerConfPlatform): void {

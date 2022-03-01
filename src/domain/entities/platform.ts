@@ -1,9 +1,9 @@
 export interface Platform {
-    platformId: number,
-    name: string;
-    type: string;
-    supportedFrom: string;
-    supportedTo: string;
+    platformId: number
+    name: string
+    type: string
+    supportedFrom: string
+    supportedTo: string
 }
 
 export class PlatformDb {

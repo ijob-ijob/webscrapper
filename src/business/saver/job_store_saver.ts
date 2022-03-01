@@ -5,6 +5,7 @@ import { Careers24JobStoreScrapper } from '../scrapper/careers24_job_store_scrap
 import { GlobalContainer } from '../../container/global_container'
 import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
 import { JobStore } from '../../domain/entities/job_store'
+import { PlatSchedConf } from '../../domain/entities/plat_sched_conf'
 import logging from '../../config/logging'
 
 const NAMESPACE = 'JobStoreSaver'
@@ -17,10 +18,9 @@ export class JobStoreSaver {
     public async importJobStores(): Promise<void> {
 
         return await new Promise<void>((async (resolve, reject) => {
-            let platformList: Platform[]
+            let platformList: PlatSchedConf[]
             const platformRepo: PlatformRepo = new PlatformRepo()
-
-            await platformRepo.getAllActivePlatforms().then((allActivePlatformsList) => {
+            await platformRepo.getAllActivePlatformsWithIdentifer().then((allActivePlatformsList) => {
                 platformList = allActivePlatformsList
             }).catch((error) => {
                 logging.error(NAMESPACE, 'An error occured while fetching all active platforms')
@@ -31,7 +31,7 @@ export class JobStoreSaver {
             for (let i = 0; i < platformList.length; i++) {
                 switch (platformList[i].name) {
                     case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                        const careers24JobStoreScrapper: Careers24JobStoreScrapper = new Careers24JobStoreScrapper()
+                        const careers24JobStoreScrapper: Careers24JobStoreScrapper = this.globalContainer.getScrapperContainer().getCareers24JobStoreScrapper()
                         const linkLists = await careers24JobStoreScrapper.getLinks()
                         this.processLinksToJobStore(platformList[i], linkLists)
                             .catch((error) => {
@@ -49,7 +49,7 @@ export class JobStoreSaver {
         }))
     }
 
-    private async processLinksToJobStore(platform: Platform, linkLists: string[]): Promise<void> {
+    private async processLinksToJobStore(platform: PlatSchedConf, linkLists: string[]): Promise<void> {
         return await new Promise<void>((async (resolve, reject) => {
             const jobStoreRepo = this.globalContainer.getRepoContainer().getJobStoreRepo()
 
