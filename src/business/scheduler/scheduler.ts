@@ -1,5 +1,5 @@
 export interface Scheduler {
-    run(): void
-    start(): void
+    run(cron: string): void
+    start(cron: string): void
     stop(): void
 }

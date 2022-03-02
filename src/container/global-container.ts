@@ -1,8 +1,8 @@
 import { ScrapperContainer } from './scrapper_container'
 import { RepoContainer } from './repo_container'
-import { JobSaverContainer } from './job_saver_container'
+import { JobSaverContainer } from './job-saver-container'
 import { SchedulerContainer } from './scheduler-container'
-import { ImporterContainer } from '../container/importer_container'
+import { ImporterContainer } from '../container/importer-container'
 
 export class GlobalContainer {
     private scrapperContainer: ScrapperContainer
@@ -36,7 +36,6 @@ export class GlobalContainer {
     }
 
     public getImporterContainer(): ImporterContainer {
-        console.log('##############################################')
         return this.importerContainer
     }
 }

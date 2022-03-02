@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 const gloabContainer: GlobalContainer = new GlobalContainer()
-let schedulerBuilder: SchedulerBuilder = new SchedulerBuilder(gloabContainer)
+const schedulerBuilder: SchedulerBuilder = new SchedulerBuilder(gloabContainer)
 
 schedulerBuilder.startSchedulers()
 

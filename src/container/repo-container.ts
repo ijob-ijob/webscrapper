@@ -1,8 +1,8 @@
-import { SchedulerConfRepo } from '../database/scheduler_conf_repo'
-import { PlatformRepo } from '../database/platform_repo'
-import { JobStoreRepo } from '../database/job_store_repo'
-import { JobDetailsRepo } from '../database/job_details_repo'
-import { DetailsStoreJobRepo } from '../database/details_store_job_repo'
+import { SchedulerConfRepo } from '../database/scheduler-conf-repo'
+import { PlatformRepo } from '../database/platform-repo'
+import { JobStoreRepo } from '../database/job-store-repo'
+import { JobDetailsRepo } from '../database/job-details-repo'
+import { DetailsStoreJobRepo } from '../database/details-store-job_repo'
 
 export class RepoContainer {
     private schedulerConfRepo: SchedulerConfRepo

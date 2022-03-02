@@ -1,7 +1,7 @@
-import { JobDetailsSaver } from '../business/saver/job_details_saver'
-import { JobStoreSaver } from '../business/saver/job_store_saver'
-import { RepoContainer } from '../container/repo_container'
-import { GlobalContainer } from '../container/global_container'
+import { JobDetailsSaver } from '../business/saver/job-details-saver'
+import { JobStoreSaver } from '../business/saver/job-store-saver'
+import { RepoContainer } from '../container/repo-container'
+import { GlobalContainer } from '../container/global-container'
 
 export class JobSaverContainer {
     private jobDetailsSaver: JobDetailsSaver

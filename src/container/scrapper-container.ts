@@ -1,6 +1,6 @@
 import { RepoContainer } from './repo_container'
-import { Careers24JobDetailsScrapper } from '../business/scrapper/careers24_job_details_scrapper'
-import { Careers24JobStoreScrapper } from '../business/scrapper/careers24_job_store_scrapper'
+import { Careers24JobDetailsScrapper } from '../business/scrapper/careers24-job-details-scrapper'
+import { Careers24JobStoreScrapper } from '../business/scrapper/careers24-job-store-scrapper'
 
 
 export class ScrapperContainer {

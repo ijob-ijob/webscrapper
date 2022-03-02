@@ -1,6 +1,6 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
-import { JobDetails } from '../domain/entities/job_details'
+import { JobDetails } from '../domain/entities/job-details'
 
 const NAMESPACE = 'JobDetailsRepo'
 export class JobDetailsRepo {

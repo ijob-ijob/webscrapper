@@ -1,5 +1,5 @@
-import { GlobalContainer } from '../../container/global_container'
-import { PlatformType } from '../../domain/constant/platform_type'
+import { GlobalContainer } from '../../container/global-container'
+import { PlatformType } from '../../domain/constant/platform-type'
 import { Platform } from '../../domain/entities/platform'
 import logging from '../../config/logging'
 
@@ -10,8 +10,6 @@ export class Career24JobStoreImporter {
     }
 
     public async import(): Promise<void> {
-        console.log('-------------------------------------------------------------------------------------------------')
-        console.log('Starting career24 job store importer')
         const that = this
         return await new Promise<void>((async (resolve, reject) => {
             const linksList: string[] = []
@@ -26,6 +24,7 @@ export class Career24JobStoreImporter {
 
             if (linksList.length === 0) {
                 logging.info(NAMESPACE, `No links found for processing for ${NAMESPACE}`)
+                return resolve()
             }
 
             let platform: Platform
@@ -39,7 +38,7 @@ export class Career24JobStoreImporter {
                 })
 
             await that.globalContainer.getJobSaverContainer().getJobStoreSaver()
-                .processLinksToJobStore(linksList, platform.platformId, platform.name)
+                .saveJobStores(linksList, platform.platformId, platform.name)
                 .then(() => {logging.info(NAMESPACE, `Successfully imported job stores for ${NAMESPACE}`)})
                 .catch((error) => {
                     logging.error(NAMESPACE, `An error occured while processing links to job stores for ${NAMESPACE}`, error)

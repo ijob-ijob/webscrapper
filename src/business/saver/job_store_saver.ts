@@ -15,7 +15,7 @@ export class JobStoreSaver {
     constructor(private globalContainer: GlobalContainer) {
     }
 
-    public async processLinksToJobStore(linkLists: string[], platformId: number, platformName: string): Promise<void> {
+    public async saveJobStores(linkLists: string[], platformId: number, platformName: string): Promise<void> {
         return await new Promise<void>((async (resolve, reject) => {
             const jobStoreRepo = this.globalContainer.getRepoContainer().getJobStoreRepo()
 

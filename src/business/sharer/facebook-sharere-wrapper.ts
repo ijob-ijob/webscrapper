@@ -1,4 +1,4 @@
-import { JobDetails } from '../../domain/entities/job_details'
+import { JobDetails } from '../../domain/entities/job-details'
 const post = require('./facebook-sharer')
 import logging from '../../config/logging'
 

@@ -1,9 +1,9 @@
-import { PlatformType } from '../../domain/constant/platform_type'
-import { JobStoreRepo } from '../../database/job_store_repo'
-import { JobStoreEntity } from '../../domain/entities/job_store'
+import { PlatformType } from '../../domain/constant/platform-type'
+import { JobStoreRepo } from '../../database/job-store-repo'
+import { JobStoreEntity } from '../../domain/entities/job-store'
 import { Platform } from '../../domain/entities/platform'
-import { PlatformRepo } from '../../database/platform_repo'
-import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
+import { PlatformRepo } from '../../database/platform-repo'
+import { JobStoreStatusType } from '../../domain/constant/job-store-status-type'
 import * as puppeteer from 'puppeteer';
 
 export class Careers24JobStoreScrapper {

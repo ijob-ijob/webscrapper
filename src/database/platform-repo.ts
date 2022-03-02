@@ -1,6 +1,6 @@
 import mysqlPool from './mysql'
 import { Platform, PlatformDb } from '../domain/entities/platform'
-import { PlatSchedConfDb, PlatSchedConf } from '../domain/entities/plat_sched_conf'
+import { PlatSchedConfDb, PlatSchedConf } from '../domain/entities/plat-sched-conf'
 import logging from '../config/logging'
 
 const NAMESPACE = 'PlatformRepo'

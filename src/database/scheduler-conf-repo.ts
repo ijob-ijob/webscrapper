@@ -1,4 +1,4 @@
-import { SchedulerConfPlatform, SchedulerConfPlatformDb } from '../domain/entities/scheduler_conf'
+import { SchedulerConfPlatform, SchedulerConfPlatformDb } from '../domain/entities/scheduler-conf'
 import logging from '../config/logging'
 import mysqlPool from './mysql'
 

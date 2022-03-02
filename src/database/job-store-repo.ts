@@ -1,7 +1,7 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
 import {Platform} from '../domain/entities/platform'
-import {JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb} from '../domain/entities/job_store'
+import {JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb} from '../domain/entities/job-store'
 
 const NAMESPACE = 'JobStoreRepo'
 
@@ -37,11 +37,11 @@ export class JobStoreRepo {
         }
     }
 
-    async getJobStoreNotProcessed(limit: number): Promise<JobStoreEntity[]> {
-        const statement = 'select * from JOB_STORE where updated_at is null and status != "ERROR" limit ?';
+    async getJobStoreNotProcessed(platformId: number, limit: number): Promise<JobStoreEntity[]> {
+        const statement = 'select * from JOB_STORE where updated_at is null and status != "ERROR" and platform_id =? limit ?';
 
         try {
-            const results = await mysqlPool.query(statement, [limit]);
+            const results = await mysqlPool.query(statement, [platformId, limit]);
             const jobStoreEntityDbList: JobStoreEntityDb[] = <JobStoreEntityDb[]>results[0]
             const jobStoreEntityList: JobStoreEntity[] = []
 
