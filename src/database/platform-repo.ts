@@ -52,7 +52,6 @@ export class PlatformRepo {
         try {
             const rows = await mysqlPool.query(statement)
             const platSchedConfDbList: PlatSchedConfDb[] = <PlatSchedConfDb[]>rows[0]
-            console.log(rows[0])
             const platSchedConfList: PlatSchedConf[] = platSchedConfDbList.map((platformDb) => {
                 return {
                     platformId: platformDb.PLATFORM_ID,
@@ -76,7 +75,6 @@ export class PlatformRepo {
         try {
             const rows = await mysqlPool.query(statement)
             const platformDbList: PlatformDb[] = <PlatformDb[]>rows[0]
-            console.log(rows[0])
             const platformList: Platform[] = platformDbList.map((platformDb) => {
                 return {
                     platformId: platformDb.PLATFORM_ID,
