@@ -1,6 +1,6 @@
 import { GlobalContainer } from '../../container/global-container'
 import { JobStoreEntity } from '../../domain/entities/job-store'
-import { JobStoreRepo } from '../../database/job_store-repo'
+import { JobStoreRepo } from '../../database/job-store-repo'
 import { Platform } from '../../domain/entities/platform'
 import { PlatformType } from '../../domain/constant/platform-type'
 import { JobDetails } from '../../domain/entities/job-details'

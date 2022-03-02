@@ -1,7 +1,7 @@
 import * as express from 'express'
 import { SchedulerBuilder } from './business/scheduler/scheduler-builder'
 import { schedule, ScheduledTask } from 'node-cron'
-import { GlobalContainer } from './container/global_container'
+import { GlobalContainer } from './container/global-container'
 
 const app = express();
 const port = 3000;

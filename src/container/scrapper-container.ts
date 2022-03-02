@@ -1,4 +1,4 @@
-import { RepoContainer } from './repo_container'
+import { RepoContainer } from './repo-container'
 import { Careers24JobDetailsScrapper } from '../business/scrapper/careers24-job-details-scrapper'
 import { Careers24JobStoreScrapper } from '../business/scrapper/careers24-job-store-scrapper'
 

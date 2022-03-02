@@ -1,5 +1,5 @@
-import { ScrapperContainer } from './scrapper_container'
-import { RepoContainer } from './repo_container'
+import { ScrapperContainer } from './scrapper-container'
+import { RepoContainer } from './repo-container'
 import { JobSaverContainer } from './job-saver-container'
 import { SchedulerContainer } from './scheduler-container'
 import { ImporterContainer } from '../container/importer-container'
