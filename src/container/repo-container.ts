@@ -2,7 +2,7 @@ import { SchedulerConfRepo } from '../database/scheduler-conf-repo'
 import { PlatformRepo } from '../database/platform-repo'
 import { JobStoreRepo } from '../database/job-store-repo'
 import { JobDetailsRepo } from '../database/job-details-repo'
-import { DetailsStoreJobRepo } from '../database/details-store-job_repo'
+import { DetailsStoreJobRepo } from '../database/details-store-job-repo'
 
 export class RepoContainer {
     private schedulerConfRepo: SchedulerConfRepo

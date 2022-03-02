@@ -1,7 +1,7 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
 import {Platform} from '../domain/entities/platform'
-import {JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb} from '../domain/entities/job-store'
+import { JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb } from '../domain/entities/job-store'
 
 const NAMESPACE = 'JobStoreRepo'
 
