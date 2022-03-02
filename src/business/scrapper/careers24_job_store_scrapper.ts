@@ -4,7 +4,7 @@ import { JobStoreEntity } from '../../domain/entities/job_store'
 import { Platform } from '../../domain/entities/platform'
 import { PlatformRepo } from '../../database/platform_repo'
 import { JobStoreStatusType } from '../../domain/constant/job_store_status_type'
-import { puppeteer } from 'puppeteer'
+import * as puppeteer from 'puppeteer';
 
 export class Careers24JobStoreScrapper {
     platform = PlatformType.CAREERS24;
@@ -12,7 +12,7 @@ export class Careers24JobStoreScrapper {
 
     async getLinks(): Promise<string[]> {
 
-        const browser = await launch()
+        const browser = await puppeteer.launch()
         const page = await browser.newPage()
         await page.goto(this.url);
 
@@ -48,7 +48,7 @@ export class Careers24JobStoreScrapper {
         return linkAccum
     }
 
-    private async getPageLinks(page: Page) {
+    private async getPageLinks(page: puppeteer.Page) {
         const divSearchResultsSelector = 'divSearchResults';
         return await page.evaluate((divSearchResultsSelector) => {
             const links: string[] = [];
