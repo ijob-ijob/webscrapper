@@ -25,7 +25,7 @@ export class Careers24JobDetailsImporterScheduler implements Scheduler {
             () => {
                 if (!this.isProcessing) {
                     this.isProcessing = true
-                    this.globalContainer.getImporterContainer().getCareer24JobStoreImporter().import()
+                    this.globalContainer.getImporterContainer().getCareers24JobDetailsImporter().import()
                         .then(() => {
                             this.isProcessing = false
                             logging.info(NAMESPACE, 'Finsihed processing job details import')

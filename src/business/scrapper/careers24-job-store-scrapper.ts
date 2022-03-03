@@ -26,7 +26,6 @@ export class Careers24JobStoreScrapper {
         let linkAccum: string[] = [];
 
         await (async () => {
-            console.log('starting for loop to get links')
             for (let i = 0; i < totPages; i++) {
                 await page.waitForSelector("#divSearchResults");
                 let unfilteredLinksList = await this.getPageLinks(page)

@@ -51,7 +51,8 @@ export class Careers24JobDetailsImporter {
                         .getCareers24JobDetailsScrapper()
                         .getJobDetails(jobStoreList[i].link, jobStoreList[i].jobStoreId, platform.platformId)
                         .then((jobDetailsRes) => {
-                            jobDetailsList.push(jobDetails)
+                            jobDetailsList.push(jobDetailsRes)
+                            jobStoreList[i].status = JobStoreStatusType.PROCESSED
                         })
                         .catch((error) => {
                             logging.warn(NAMESPACE, 'An occur occured while fetching job details', [jobStoreList[i], error])
