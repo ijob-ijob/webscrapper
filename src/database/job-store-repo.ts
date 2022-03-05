@@ -1,35 +1,29 @@
 import mysqlPool from './mysql'
 import logging from '../config/logging'
-import {Platform} from '../domain/entities/platform'
+import { Platform } from '../domain/entities/platform'
 import { JobStore, JobStoreEntity, JobStoreDb, JobStoreEntityDb } from '../domain/entities/job-store'
 
 const NAMESPACE = 'JobStoreRepo'
 
 export class JobStoreRepo {
 
-    async getJobStoreByPlatformName(platform: string): Promise<JobStore[]> {
-        const statement = 'select * from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where name = ?'
+    async getJobStoreByPlatformName(platform: string): Promise<JobStoreEntity[]> {
+        const statement = 'select JOB_STORE.* from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where updated_at is null and name = ?'
 
         try {
             const results = await mysqlPool.query(statement, [platform])
-            const jobDetailsDbList: JobStoreDb[] = <JobStoreDb[]>results[0]
-            const jobDetailsList: JobStore[] = jobDetailsDbList.map((jobDetailsDb) => {
+            const jobStoreDbList: JobStoreEntityDb[] = <JobStoreEntityDb[]>results[0]
+            const jobDetailsList: JobStoreEntity[] = jobStoreDbList.map((jobStoreDb) => {
                 return {
-                    jobStoreId: jobDetailsDb.JOB_STORE_ID,
-                    link: jobDetailsDb.LINK,
-                    data: jobDetailsDb.DATA,
-                    updatedAt: jobDetailsDb.UPDATED_AT,
-                    status: jobDetailsDb.STATUS,
-                    platform: {
-                        platformId: jobDetailsDb.PLATFORM.PLATFORM_ID,
-                        name: jobDetailsDb.PLATFORM.NAME,
-                        type: jobDetailsDb.PLATFORM.TYPE,
-                        supportedFrom: jobDetailsDb.PLATFORM.SUPPORTED_FROM,
-                        supportedTo: jobDetailsDb.PLATFORM.SUPPORTED_TO
-                    }
+                    jobStoreId: jobStoreDb.JOB_STORE_ID,
+                    link: jobStoreDb.LINK,
+                    data: jobStoreDb.DATA,
+                    updatedAt: jobStoreDb.UPDATED_AT,
+                    status: jobStoreDb.STATUS,
+                    platformId: jobStoreDb.PLATFORM_ID
                 }
             })
-            logging.info(NAMESPACE, 'Finished getting job store by links and platfirm', jobDetailsList)
+           logging.info(NAMESPACE, 'Finished getting job store by links and platfirm', jobDetailsList)
             return jobDetailsList
         } catch (error) {
             logging.error(NAMESPACE, 'An error occurred', error)
@@ -74,7 +68,7 @@ export class JobStoreRepo {
                 resolve('success')
             } catch (error) {
                 logging.error(NAMESPACE, 'Failed to insert job store list', error)
-                reject(`Failed to insert job store list ${error}`)
+                reject(`Failed to insert job store list::${error}`)
             }
         })
 
