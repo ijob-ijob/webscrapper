@@ -31,6 +31,7 @@ export class Careers24JobStoreImporterScheduler implements Scheduler {
                             this.isProcessing = false
                             logging.info(NAMESPACE, 'Finsihed processing job store import')
                         }).catch((error) => {
+                        this.isProcessing = false
                         logging.error(NAMESPACE, 'An error occured while processing job store import')
                     })
                 } else {

@@ -43,14 +43,19 @@ export class JobDetailsSaver {
             if (jobDetailsToBeSavedList.length > 0) {
                 const detailsStoreJobRepo: DetailsStoreJobRepo = new DetailsStoreJobRepo()
                 await detailsStoreJobRepo.saveJobDetailsAndUpdateJobStore(jobDetailsToBeSavedList, jobStoreList)
-                    .then(() => logging.info(NAMESPACE, 'Successully added job details'))
-                    .catch((error) => {
+                    .then(() => {
+                        logging.info(NAMESPACE, 'Successully added job details')
+                        return resolve()
+                    }).catch((error) => {
                         logging.error(NAMESPACE, `An error occured while saving job details`, error)
                         return reject(new Error(`An error occured while saving job details, ${error}`))
                     })
             } else {
                 await that.globalContainer.getRepoContainer().getJobStoreRepo().updateJobStoreBulk(jobStoreList)
-                    .then(() => logging.info(NAMESPACE, 'Finished updating job store failures'))
+                    .then(() => {
+                        logging.info(NAMESPACE, 'Finished updating job store failures')
+                        return resolve()
+                    })
                     .catch((error) => {
                         logging.error(NAMESPACE, `An error occured while saving job details`, error)
                         return reject(new Error(`An error occured while updating job store failures`))

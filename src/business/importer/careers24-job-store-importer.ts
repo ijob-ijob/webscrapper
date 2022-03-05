@@ -39,8 +39,10 @@ export class Career24JobStoreImporter {
 
             await that.globalContainer.getJobSaverContainer().getJobStoreSaver()
                 .saveJobStores(linksList, platform.platformId, platform.name)
-                .then(() => {logging.info(NAMESPACE, `Successfully imported job stores for ${NAMESPACE}`)})
-                .catch((error) => {
+                .then(() => {
+                    logging.info(NAMESPACE, `Successfully imported job stores for ${NAMESPACE}`)
+                    return resolve()
+                }).catch((error) => {
                     logging.error(NAMESPACE, `An error occured while processing links to job stores for ${NAMESPACE}`, error)
                     return reject(new Error(`An error occured while processing links to job stores for ${NAMESPACE}, error::${error}`))
                 })

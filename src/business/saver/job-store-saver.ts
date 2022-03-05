@@ -66,7 +66,8 @@ export class JobStoreSaver {
                         }
                     })
                 }
-            } while (isDuplicateError)
+            } while (isDuplicateError && newLinksList.length != 0)
+            return resolve()
         }))
     }
 

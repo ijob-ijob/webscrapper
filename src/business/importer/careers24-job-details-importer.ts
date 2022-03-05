@@ -63,8 +63,10 @@ export class Careers24JobDetailsImporter {
 
             this.globalContainer.getJobSaverContainer()
                 .getJobDetailsSaver().saveJobDetails(jobDetailsList, jobStoreList)
-                .then(() => {logging.info(NAMESPACE, 'Successfully saved job details list and/or job store list')})
-                .catch((error) => {
+                .then(() => {
+                    logging.info(NAMESPACE, 'Successfully saved job details list and/or job store list')
+                    return resolve()
+                }).catch((error) => {
                     logging.error(NAMESPACE, `An error occoured while saving job details list and/or job store list`, error)
                     return reject(new Error(`An error occured while saving job details list/or job store list for ${NAMESPACE}, error::${error}`))
                 })
