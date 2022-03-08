@@ -31,12 +31,13 @@ export class Careers24JobDetailsImporter {
             const jobStoreRepo: JobStoreRepo = that.globalContainer.getRepoContainer().getJobStoreRepo();
             let jobStoreList: JobStoreEntity[]
             //todo change and make this configurable
-            await jobStoreRepo.getJobStoreNotProcessed(platform.platformId, 5).then((jobStoreEntityList: JobStoreEntity[]) => {
-                jobStoreList = jobStoreEntityList
-            }).catch((error) => {
-                logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
-                return reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
-            })
+            await jobStoreRepo.getJobStoreNotProcessed(platform.platformId, 35)
+                .then((jobStoreEntityList: JobStoreEntity[]) => {
+                    jobStoreList = jobStoreEntityList})
+                .catch((error) => {
+                    logging.error(NAMESPACE, 'An error occured while fetching job stores not processing', error)
+                    return reject(new Error(`An error occured while fetching job stores not processsing, ${error}`))
+                })
 
             if (!jobStoreList || jobStoreList.length == 0) {
                 return resolve()
@@ -70,7 +71,7 @@ export class Careers24JobDetailsImporter {
                     logging.error(NAMESPACE, `An error occoured while saving job details list and/or job store list`, error)
                     return reject(new Error(`An error occured while saving job details list/or job store list for ${NAMESPACE}, error::${error}`))
                 })
-
+            return resolve()
         }))
     }
 }

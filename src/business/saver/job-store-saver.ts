@@ -72,9 +72,14 @@ export class JobStoreSaver {
     }
 
     private removeDupilicate(links: string[], duplicateLink: string): string[] {
-        const index: number = links.indexOf(duplicateLink)
+        let index
+        for (let i = 0; i < links.length; i++) {
+            if (links[i].includes(duplicateLink)) {
+                index = i
+            }
+        }
         if (index === -1) {
-            logging.warn(NAMESPACE, 'dupliicate link detected but not found in list of links', [links, duplicateLink])
+            logging.warn(NAMESPACE, 'dupliicate link detected but not found in list of links', [duplicateLink])
             return links
         }
 
