@@ -7,7 +7,7 @@ const NAMESPACE = 'JobStoreRepo'
 
 export class JobStoreRepo {
 
-    async getJobStoreByPlatformName(platform: string): Promise<JobStoreEntity[]> {
+    public async getJobStoreByPlatformName(platform: string): Promise<JobStoreEntity[]> {
         const statement = 'select JOB_STORE.* from JOB_STORE inner join PLATFORM on JOB_STORE.platform_id = PLATFORM.platform_id where updated_at is null and name = ?'
 
         try {
@@ -20,7 +20,8 @@ export class JobStoreRepo {
                     data: jobStoreDb.DATA,
                     updatedAt: jobStoreDb.UPDATED_AT,
                     status: jobStoreDb.STATUS,
-                    platformId: jobStoreDb.PLATFORM_ID
+                    platformId: jobStoreDb.PLATFORM_ID,
+                    createdAt: jobStoreDb.CREATED_AT
                 }
             })
            logging.info(NAMESPACE, 'Finished getting job store by links and platfirm', jobDetailsList)
@@ -31,7 +32,7 @@ export class JobStoreRepo {
         }
     }
 
-    async getJobStoreNotProcessed(platformId: number, limit: number): Promise<JobStoreEntity[]> {
+    public async getJobStoreNotProcessed(platformId: number, limit: number): Promise<JobStoreEntity[]> {
         const statement = 'select * from JOB_STORE where updated_at is null and status != "ERROR" and platform_id =? limit ?';
 
         try {
@@ -47,7 +48,8 @@ export class JobStoreRepo {
                         data: jobStoreEntityDb.DATA,
                         platformId: jobStoreEntityDb.PLATFORM_ID,
                         updatedAt: jobStoreEntityDb.UPDATED_AT,
-                        status: jobStoreEntityDb.STATUS
+                        createdAt: jobStoreEntityDb.CREATED_AT,
+                        status: jobStoreEntityDb.STATUS,
                     }
                 }))
             logging.info(NAMESPACE, 'Finished getting job store not processed', jobStoreEntityList)
@@ -58,7 +60,7 @@ export class JobStoreRepo {
         }
     }
 
-    async saveJobStore(jobStoreList: any): Promise<string> {
+    public async saveJobStore(jobStoreList: any): Promise<string> {
         return await new Promise<string>(async function (resolve, reject) {
             const statement = 'insert into JOB_STORE (link, data, platform_id, status) values ?'
 
@@ -74,7 +76,35 @@ export class JobStoreRepo {
 
     }
 
-    async updateJobStoreBulk(jobStoreList: JobStoreEntity[]): Promise<string> {
+    public async getDuplicates(limit: number): Promise<JobStoreEntity[]> {
+        return await new Promise<JobStoreEntity[]>(async (resolve, reject) => {
+            const statement = `select * from JOB_STORE where LINK IN (
+                                        select LINK from JOB_STORE group by LINK having count(*) >= 2 limit ?)`
+
+            try {
+                const results = await mysqlPool.query(statement, [limit]);
+                const jobStoreEntityDbList: JobStoreEntityDb[] = <JobStoreEntityDb[]>results[0]
+                const jobStoreEntityList: JobStoreEntity[] = jobStoreEntityDbList.map((jobStoreEntityDb) => {
+                    return {
+                        jobStoreId: jobStoreEntityDb.JOB_STORE_ID,
+                        link: jobStoreEntityDb.LINK,
+                        data: jobStoreEntityDb.DATA,
+                        platformId: jobStoreEntityDb.PLATFORM_ID,
+                        updatedAt: jobStoreEntityDb.UPDATED_AT,
+                        status: jobStoreEntityDb.STATUS,
+                        createdAt: jobStoreEntityDb.CREATED_AT
+                    }
+                })
+                logging.info(NAMESPACE, 'Finished getting duplicate job stores', jobStoreEntityList)
+                return resolve(jobStoreEntityList)
+            } catch (error) {
+                logging.error(NAMESPACE, 'An error occured while getting duplicate store', error)
+                return reject(new Error(`An error occured while getting job store duplicates for ${NAMESPACE}:::${error}`))
+            }
+        })
+    }
+
+    public async updateJobStoreBulk(jobStoreList: JobStoreEntity[]): Promise<string> {
 
         let params = jobStoreList.map((jobStore) => {
             return {
