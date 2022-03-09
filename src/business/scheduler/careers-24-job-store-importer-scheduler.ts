@@ -7,31 +7,50 @@ import logging from '../../config/logging'
 
 const NAMESPACE = 'Careers24ScrapperScheduler'
 export class Careers24JobStoreImporterScheduler implements Scheduler {
-    private isProcessing: boolean = false
+    private isProcessingInternal: boolean = false
     private cronJob: ScheduledTask
+    private identifier: string
 
     constructor(private globalContainer: GlobalContainer) {}
 
-    public start(cron: string): void {
-        this.run(cron)
+    public start(identifier: string, cron: string): void {
+        if (!this.identifier) {
+            this.setIdentifier(identifier)
+        }
+        this.run(identifier, cron)
     }
 
     public stop(): void {
         this.cronJob.stop()
     }
 
-    public run(cron: string): void {
+    public getIdentifier(): string {
+        return this.identifier
+    }
+
+    private setIdentifier(identifier: string): void {
+        this.identifier = identifier
+    }
+
+    public isProcessing(): boolean {
+        return this.isProcessingInternal
+    }
+
+    public run(identifier: string, cron: string): void {
+        if (!this.identifier) {
+            this.setIdentifier(identifier)
+        }
         logging.info(NAMESPACE, 'STARTING::Careers24JobStoreImporterScheduler')
         let scheduledTask: ScheduledTask = schedule(cron,
             () => {
-                if (!this.isProcessing) {
-                    this.isProcessing = true
+                if (!this.isProcessingInternal) {
+                    this.isProcessingInternal = true
                     this.globalContainer.getImporterContainer().getCareer24JobStoreImporter().import()
                         .then(() => {
-                            this.isProcessing = false
+                            this.isProcessingInternal = false
                             logging.info(NAMESPACE, 'Finsihed processing job store import')
                         }).catch((error) => {
-                        this.isProcessing = false
+                        this.isProcessingInternal = false
                         logging.error(NAMESPACE, 'An error occured while processing job store import')
                     })
                 } else {

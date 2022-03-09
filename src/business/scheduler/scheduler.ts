@@ -1,5 +1,7 @@
 export interface Scheduler {
-    run(cron: string): void
-    start(cron: string): void
+    run(identifier: string, cron: string): void
+    start(identifier: string, cron: string): void
     stop(): void
+    isProcessing(): boolean
+    getIdentifier(): string
 }

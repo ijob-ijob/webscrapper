@@ -15,6 +15,10 @@ app.get('/', (req, res) => {
     res.send('Hello World webscrapper!');
 });
 
+app.get('/job-details', (req, res) => {
+    res.send(schedulerBuilder.getJobDetails())
+})
+
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`)
 });

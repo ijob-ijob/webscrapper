@@ -9,6 +9,11 @@ import { Scheduler } from './scheduler'
 import { GlobalContainer } from '../../container/global-container'
 import { Careers24JobStoreImporterScheduler } from './careers-24-job-store-importer-scheduler'
 
+export interface SchedulerJobDetails {
+    identitifier: string
+    isProcessing: boolean
+}
+
 const NAMESPACE = 'SchedulerBuilder'
 export class SchedulerBuilder {
     private careers24JobStoreImporterScheduler: Scheduler
@@ -17,6 +22,19 @@ export class SchedulerBuilder {
     constructor(private globalContainer: GlobalContainer) {
         this.careers24JobStoreImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobStoreImporterScheduler()
         this.careers24JobDetailsImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobDetailsImporterScheduler()
+    }
+
+    public getJobDetails(): SchedulerJobDetails[] {
+        return [
+            {
+                identitifier: 'careers24JobStoreImporterScheduler',
+                isProcessing: this.careers24JobStoreImporterScheduler.isProcessing()
+            },
+            {
+                identitifier: 'careers24JobDetailsImporterScheduler',
+                isProcessing: this.careers24JobDetailsImporterScheduler.isProcessing()
+            }
+        ]
     }
 
     public async startSchedulers(): Promise<void> {
@@ -42,10 +60,10 @@ export class SchedulerBuilder {
 
             switch (schedulerConfPlaform.identifier) {
                 case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                    this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.cron)
+                    this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
-                    this.careers24JobDetailsImporterScheduler.start(schedulerConfPlaform.cron)
+                    this.careers24JobDetailsImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)

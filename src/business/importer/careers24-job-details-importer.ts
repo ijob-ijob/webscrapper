@@ -31,7 +31,7 @@ export class Careers24JobDetailsImporter {
             const jobStoreRepo: JobStoreRepo = that.globalContainer.getRepoContainer().getJobStoreRepo();
             let jobStoreList: JobStoreEntity[]
             //todo change and make this configurable
-            await jobStoreRepo.getJobStoreNotProcessed(platform.platformId, 35)
+            await jobStoreRepo.getJobStoreNotProcessed(platform.platformId, 50)
                 .then((jobStoreEntityList: JobStoreEntity[]) => {
                     jobStoreList = jobStoreEntityList})
                 .catch((error) => {
