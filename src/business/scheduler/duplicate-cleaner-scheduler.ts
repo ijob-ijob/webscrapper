@@ -42,7 +42,7 @@ export class DuplicateCleanerScheduler implements Scheduler{
             () => {
                 if (!this.isProcessingInternal) {
                     this.isProcessingInternal = true
-                    this.globalContainer.getImporterContainer().getCareers24JobDetailsImporter().import()
+                    this.globalContainer.getCleanerContainer().getDuplicateCleaner().cleanDuplicates()
                         .then(() => {
                             this.isProcessingInternal = false
                             logging.info(NAMESPACE, 'Finsihed processing job store/details duplicates')

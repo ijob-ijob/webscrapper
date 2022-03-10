@@ -15,7 +15,7 @@ export class DetailsStoreJobRepo {
                           const jobStoreIdList: number[] = jobStoreList.map((jobStore) => {
                               return jobStore.jobStoreId
                           })
-                          conn.query(`delete from JOB_DETAILS where JOB_STORE_ID IN ?`, [jobStoreIdList])
+                          conn.query(`delete from JOB_DETAILS where JOB_STORE_ID IN (?)`, [jobStoreIdList])
                               .then(() => {
                                   logging.info(NAMESPACE, 'Successfully deleted job details duplicates')
 

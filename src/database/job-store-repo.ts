@@ -79,7 +79,7 @@ export class JobStoreRepo {
     public async getDuplicates(limit: number): Promise<JobStoreEntity[]> {
         return await new Promise<JobStoreEntity[]>(async (resolve, reject) => {
             const statement = `select * from JOB_STORE where LINK IN (
-                                        select LINK from JOB_STORE group by LINK having count(*) >= 2 limit ?)`
+                                        select LINK from JOB_STORE group by LINK having count(*) >= 2)  limit ?`
 
             try {
                 const results = await mysqlPool.query(statement, [limit]);
