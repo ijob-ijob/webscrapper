@@ -18,10 +18,12 @@ const NAMESPACE = 'SchedulerBuilder'
 export class SchedulerBuilder {
     private careers24JobStoreImporterScheduler: Scheduler
     private careers24JobDetailsImporterScheduler: Scheduler
+    private duplicateCleanerScheduler: Scheduler
 
     constructor(private globalContainer: GlobalContainer) {
         this.careers24JobStoreImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobStoreImporterScheduler()
         this.careers24JobDetailsImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobDetailsImporterScheduler()
+        this.duplicateCleanerScheduler = this.globalContainer.getSchedulerContainer().getDuplicateCleanerScheduler()
     }
 
     public getJobDetails(): SchedulerJobDetails[] {
@@ -33,6 +35,10 @@ export class SchedulerBuilder {
             {
                 identitifier: 'careers24JobDetailsImporterScheduler',
                 isProcessing: this.careers24JobDetailsImporterScheduler.isProcessing()
+            },
+            {
+                identitifier: 'duplicateCleanerScheduler',
+                isProcessing: this.duplicateCleanerScheduler.isProcessing()
             }
         ]
     }
@@ -64,6 +70,9 @@ export class SchedulerBuilder {
                     break
                 case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
                     this.careers24JobDetailsImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                    break
+                case SchedulerConfType.DUPLICATECLEANER:
+                    this.duplicateCleanerScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
