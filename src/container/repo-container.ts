@@ -39,7 +39,7 @@ export class RepoContainer {
         return this.jobDetailsRepo
     }
 
-    public getDetailsStorreJobRepo(): DetailsStoreJobRepo {
+    public getDetailsStoreJobRepo(): DetailsStoreJobRepo {
         return this.detailsStoreJobRepo
     }
 }

@@ -31,14 +31,14 @@ export class DuplicateCleaner {
                 return duplicateJobStore.jobStoreId
             })
 
-            let duplicateJobDetailsList: JobDetails[] = []
-            this.glabalContainer.getRepoContainer().getJobDetailsRepo().getJobDetailsByJobStoreId(jobStoreIdList, 20)
-                .then((jobDetailsDuplicate) => {
-                    duplicateJobDetailsList.push(...jobDetailsDuplicate)
-                }).catch((error) => {
-                    logging.error(NAMESPACE, 'An error occured whole fetching job details duplicates', error)
-                return reject(new Error(`An error occured while fetching job details duplicate for ${NAMESPACE}::error::${error}`))
-                })
+            // let duplicateJobDetailsList: JobDetails[] = []
+            // this.glabalContainer.getRepoContainer().getJobDetailsRepo().getJobDetailsByJobStoreId(jobStoreIdList, 20)
+            //     .then((jobDetailsDuplicate) => {
+            //         duplicateJobDetailsList.push(...jobDetailsDuplicate)
+            //     }).catch((error) => {
+            //         logging.error(NAMESPACE, 'An error occured whole fetching job details duplicates', error)
+            //     return reject(new Error(`An error occured while fetching job details duplicate for ${NAMESPACE}::error::${error}`))
+            //     })
 
             duplicateJobStoreList.forEach((duplicateJobStore) => {
                 duplicateJobStore.status = JobStoreStatusType.DUPLICATE
@@ -46,12 +46,25 @@ export class DuplicateCleaner {
 
             duplicateJobStoreList.sort((a, b) => a.createdAt > b.createdAt ? 1: -1)
 
-            if (duplicateJobDetailsList.length > 0) {
-
+            if (duplicateJobStoreList.length > 0) {
+                this.glabalContainer.getRepoContainer()
+                    .getDetailsStoreJobRepo().updateJobStoreAndDeleteJobDetailsDuplicates(duplicateJobStoreList)
+                    .then(() => {
+                        logging.info(NAMESPACE, 'Finished processing duplicates')
+                        return resolve()
+                    }).catch((error) => {
+                        logging.error(NAMESPACE, 'An error occured while processing duplicate job store/details')
+                    return reject(new Error(`An error occured while processing duplocate job store/details::${error}`))
+                })
             } else {
                 this.glabalContainer.getRepoContainer().getJobStoreRepo().updateJobStoreBulk(duplicateJobStoreList)
-                    .then()
-                    .catch()
+                    .then(() => {
+                        logging.info(NAMESPACE, 'Successfully updated duplicate job stores')
+                        return resolve()
+                    }).catch((error) => {
+                        logging.error(NAMESPACE, 'An error occured while updating job store duplicates')
+                    return reject(`An error occured while updating job store duplicates, ${NAMESPACE}::error::${error}`)
+                })
             }
 
         })
