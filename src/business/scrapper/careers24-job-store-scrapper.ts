@@ -12,7 +12,10 @@ export class Careers24JobStoreScrapper {
 
     async getLinks(): Promise<string[]> {
 
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch({
+            args: ['--disable-dev-shm-usage'],
+            headless: true
+        })
         const page = await browser.newPage()
         await page.goto(this.url);
 

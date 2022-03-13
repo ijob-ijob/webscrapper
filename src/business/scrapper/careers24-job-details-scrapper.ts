@@ -8,7 +8,10 @@ export class Careers24JobDetailsScrapper {
 
     async getJobDetails(jobLink: string, jobStoreId: number, platformId: number): Promise<JobDetails> {
         return await new  Promise<JobDetails>(async function (resolve, reject) {
-            const browser = await puppeteer.launch()
+            const browser = await puppeteer.launch({
+                args: ['--disable-dev-shm-usage'],
+                headless: true
+            })
             const page = await browser.newPage()
             try {
                 await page.goto(jobLink);
