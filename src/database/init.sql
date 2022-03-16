@@ -61,13 +61,16 @@ WHERE PLATFORM.SUPPORTED_TO IS NULL
 AND SCHEDULER_CONF.SUPPORTED_TO IS NULL;
 
 INSERT INTO SCHEDULER_CONF (cron, platform_id, supported_from, description, identifier)
-VALUES ('* * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job details resolver', 'CAREERS24JONDETAILSRESOLVER');
+VALUES ('0 */20 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job details resolver', 'CAREERS24JONDETAILSRESOLVER');
 
 INSERT INTO SCHEDULER_CONF(cron, platform_id, supported_from, description, identifier)
-VALUES ('* * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job store importer', 'CAREERS24JOBSTOREIMPORTER');
+VALUES ('0 */55 * * * *', 10000, '2021-07-04 18:39:36', 'Careers24 job store importer', 'CAREERS24JOBSTOREIMPORTER');
 
 INSERT INTO SCHEDULER_CONF(cron, platform_id, supported_from, description, identifier)
-VALUES ('* * * * *', 10000, '2021-07-04 18:39:36', 'Job store/details duplicate cleaner', 'DUPLICATECLEANER');
+VALUES ('0 */30 * * * *', 10000, '2021-07-04 18:39:36', 'Job store/details duplicate cleaner', 'DUPLICATECLEANER');
+
+INSERT INTO SCHEDULER_CONF(cron, platform_id, supported_from, description, identifier)
+VALUES ('0 */45 * * * *', 10000, '2021-07-04 18:39:36', 'Scheduler reseter', 'SCHEDULERRESETER');
 
 
 INSERT INTO PLATFORM (name, type, supported_from)

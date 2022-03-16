@@ -18,7 +18,7 @@ export class Career24JobStoreImporter {
                     linksList.push(...linksListRes)
                 })
                 .catch((error) => {
-                   // logging.error(NAMESPACE, `An error occured while getting links for ${NAMESPACE}`, error)
+                   logging.error(NAMESPACE, `An error occured while getting links for ${NAMESPACE}`, error)
                     return reject(new Error(`An error occured while getting job store links for ${NAMESPACE}, error::${error}`))
                 })
 
@@ -33,17 +33,17 @@ export class Career24JobStoreImporter {
                     platform = platformRes
                 })
                 .catch((error) => {
-                   // logging.error(NAMESPACE, `An error occured while getting platform for ${NAMESPACE}`, error)
+                   logging.error(NAMESPACE, `An error occured while getting platform for ${NAMESPACE}`, error)
                     return reject(new Error(`An error occured while getting platform record for ${NAMESPACE}, error::${error}`))
                 })
 
             await that.globalContainer.getJobSaverContainer().getJobStoreSaver()
                 .saveJobStores(linksList, platform.platformId, platform.name)
                 .then(() => {
-                   // logging.info(NAMESPACE, `Successfully imported job stores for ${NAMESPACE}`)
+                   logging.info(NAMESPACE, `Successfully imported job stores for ${NAMESPACE}`)
                     return resolve()
                 }).catch((error) => {
-                    //logging.error(NAMESPACE, `An error occured while processing links to job stores for ${NAMESPACE}`, error)
+                    logging.error(NAMESPACE, `An error occured while processing links to job stores for ${NAMESPACE}`, error)
                     return reject(new Error(`An error occured while processing links to job stores for ${NAMESPACE}, error::${error}`))
                 })
 

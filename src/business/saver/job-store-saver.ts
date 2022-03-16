@@ -24,7 +24,7 @@ export class JobStoreSaver {
             await jobStoreRepo.getJobStoreByPlatformName(platformName)
                 .then((jobStoreListResults) => jobStoreList.push(...jobStoreListResults))
                 .catch((error) => {
-                   // logging.error(NAMESPACE, `An error occured while getting job stores by platform`, error)
+                   logging.error(NAMESPACE, `An error occured while getting job stores by platform`, error)
                     return reject(`An error occured while getting job stores by platform, ${error}`)
                 })
 
@@ -61,7 +61,7 @@ export class JobStoreSaver {
                             const duplicate: string = that.getDuplicate(error.toString())
                             newLinksList = that.removeDupilicate(newLinksList, duplicate)
                         } else {
-                           // logging.error(NAMESPACE, `An error occured while saving job stores`, error)
+                           logging.error(NAMESPACE, `An error occured while saving job stores`, error)
                             return reject(`An error occured while saving job stores, ${error}`)
                         }
                     })

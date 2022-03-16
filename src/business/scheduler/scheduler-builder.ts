@@ -19,11 +19,13 @@ export class SchedulerBuilder {
     private careers24JobStoreImporterScheduler: Scheduler
     private careers24JobDetailsImporterScheduler: Scheduler
     private duplicateCleanerScheduler: Scheduler
+    private schedulerReseter: Scheduler
 
     constructor(private globalContainer: GlobalContainer) {
         this.careers24JobStoreImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobStoreImporterScheduler()
         this.careers24JobDetailsImporterScheduler = this.globalContainer.getSchedulerContainer().getCareers24JobDetailsImporterScheduler()
         this.duplicateCleanerScheduler = this.globalContainer.getSchedulerContainer().getDuplicateCleanerScheduler()
+        this.schedulerReseter = this.globalContainer.getSchedulerContainer().getSchedulerReseter()
     }
 
     public getJobDetails(): SchedulerJobDetails[] {
@@ -39,6 +41,10 @@ export class SchedulerBuilder {
             {
                 identitifier: 'duplicateCleanerScheduler',
                 isProcessing: this.duplicateCleanerScheduler.isProcessing()
+            },
+            {
+                identitifier: 'schedulerReseter',
+                isProcessing: this.schedulerReseter.isProcessing()
             }
         ]
     }
@@ -65,14 +71,17 @@ export class SchedulerBuilder {
             let schedulerConfPlaform: SchedulerConfPlatform = schdulerConfPlatformList[i]
 
             switch (schedulerConfPlaform.identifier) {
-                case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                    //this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
-                    break
                 case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
                     this.careers24JobDetailsImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 case SchedulerConfType.DUPLICATECLEANER:
-                   // this.duplicateCleanerScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                    this.duplicateCleanerScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                    break
+                case SchedulerConfType.SCHEDULERRESETER:
+                    this.schedulerReseter.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
+                    break
+                case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
+                    this.careers24JobStoreImporterScheduler.start(schedulerConfPlaform.identifier, schedulerConfPlaform.cron)
                     break
                 default:
                     logging.warn(NAMESPACE, 'Could not find configured scheduler conf', schedulerConfPlaform)
