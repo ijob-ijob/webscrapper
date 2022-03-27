@@ -17,10 +17,11 @@ if (process.env.NODE_ENV === EnvType.PRODUCTION) {
             password: config.mysql.password,
             multipleStatements: true,
             ssl: {
-                ca: fs.readFileSync(path.join(__dirname, '../certs/LightsailDefaultKey-eu-west-2.pem'), 'utf-8')
+                ca: fs.readFileSync(path.join(__dirname, '../certs/').concat('rds-ca-2019-eu-west-2.pem'), 'utf8'),
+                rejectUnauthorized: config.mysql.rejectUnauthorized
             }
         })
-} else if (process.env.NODE_DEV === EnvType.TEST) {
+} else if (process.env.NODE_ENV === EnvType.TEST) {
     pool = createPool({
         host: config.mysql.host,
         database: config.mysql.database,
@@ -29,7 +30,8 @@ if (process.env.NODE_ENV === EnvType.PRODUCTION) {
         password: config.mysql.password,
         multipleStatements: true,
         ssl: {
-            ca: fs.readFileSync(path.join(__dirname, '../certs/LightsailDefaultKey-eu-west-2.pem'), 'utf-8')
+            ca: fs.readFileSync(path.join(__dirname, '../certs/').concat('rds-ca-2019-eu-west-2.pem'), 'utf8'),
+            rejectUnauthorized: config.mysql.rejectUnauthorized
         }
     })
 } else {
