@@ -6,7 +6,6 @@ module.exports = {
   extends: [
     'standard'
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'
@@ -15,5 +14,6 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
-  }
+  },
+  parser: '@typescript-eslint/parser'
 }

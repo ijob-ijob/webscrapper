@@ -20,8 +20,8 @@ export class JobDetailsDb {
     TYPE: string
     PLATFORM_ID: number
     REFERENCE: string
-    SALAMY_MIN: string
-    SALAMY_MAX: string
+    SALARY_MIN: string
+    SALARY_MAX: string
     LOCATION: string
     CLOSING_DATE: string
     EMPLOYER: string
