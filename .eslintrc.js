@@ -14,6 +14,7 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
+    'no-useless-constructor': 'off'
   },
   parser: '@typescript-eslint/parser'
 }
