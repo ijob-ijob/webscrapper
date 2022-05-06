@@ -25,7 +25,7 @@ export class Career24JobStoreImporter {
     }
 
     let platform: Platform
-    await this.globalContainer.getRepoContainer().getPatormRepo().getPlatformInfo(PlatformType.CAREERS24)
+    await this.globalContainer.getRepoContainer().getPlatformRepo().getPlatformInfo(PlatformType.CAREERS24)
       .then((platformRes: Platform) => {
         platform = platformRes
       })

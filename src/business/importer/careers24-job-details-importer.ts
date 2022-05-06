@@ -14,7 +14,7 @@ export class Careers24JobDetailsImporter {
   public async import (): Promise<void> {
     let platform: Platform
     await this.globalContainer.getRepoContainer()
-      .getPatormRepo().getPlatformInfo(PlatformType.CAREERS24)
+      .getPlatformRepo().getPlatformInfo(PlatformType.CAREERS24)
       .then((platformRes: Platform) => {
         platform = platformRes
       }).catch((error) => {

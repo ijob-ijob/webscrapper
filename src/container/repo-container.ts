@@ -11,35 +11,35 @@ export class RepoContainer {
     private jobDetailsRepo: JobDetailsRepo
     private detailsStoreJobRepo: DetailsStoreJobRepo
 
-    constructor() {
-        this.init()
+    constructor () {
+      this.init()
     }
 
-    private init() {
-        this.schedulerConfRepo = new SchedulerConfRepo()
-        this.platformRepo = new PlatformRepo()
-        this.jobStoreRepo = new JobStoreRepo()
-        this.jobDetailsRepo = new JobDetailsRepo()
-        this.detailsStoreJobRepo = new DetailsStoreJobRepo()
+    private init () {
+      this.schedulerConfRepo = new SchedulerConfRepo()
+      this.platformRepo = new PlatformRepo()
+      this.jobStoreRepo = new JobStoreRepo()
+      this.jobDetailsRepo = new JobDetailsRepo()
+      this.detailsStoreJobRepo = new DetailsStoreJobRepo()
     }
 
-    public getSchedulerConfigRepo(): SchedulerConfRepo {
-        return this.schedulerConfRepo
+    public getSchedulerConfigRepo (): SchedulerConfRepo {
+      return this.schedulerConfRepo
     }
 
-    public getPatormRepo(): PlatformRepo {
-        return this.platformRepo
+    public getPlatformRepo (): PlatformRepo {
+      return this.platformRepo
     }
 
-    public getJobStoreRepo(): JobStoreRepo {
-        return this.jobStoreRepo
+    public getJobStoreRepo (): JobStoreRepo {
+      return this.jobStoreRepo
     }
 
-    public getJobDetailsRepo(): JobDetailsRepo {
-        return this.jobDetailsRepo
+    public getJobDetailsRepo (): JobDetailsRepo {
+      return this.jobDetailsRepo
     }
 
-    public getDetailsStoreJobRepo(): DetailsStoreJobRepo {
-        return this.detailsStoreJobRepo
+    public getDetailsStoreJobRepo (): DetailsStoreJobRepo {
+      return this.detailsStoreJobRepo
     }
 }

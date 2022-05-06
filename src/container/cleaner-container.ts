@@ -4,15 +4,15 @@ import { GlobalContainer } from '../container/global-container'
 export class CleanerContainer {
     private duplicateCleaner: DuplicateCleaner
 
-    constructor(private globalContainer: GlobalContainer) {
-        this.init()
+    constructor (private globalContainer: GlobalContainer) {
+      this.init()
     }
 
-    private init(): void {
-        this.duplicateCleaner = new DuplicateCleaner(this.globalContainer)
+    private init (): void {
+      this.duplicateCleaner = new DuplicateCleaner(this.globalContainer)
     }
 
-    public getDuplicateCleaner(): DuplicateCleaner {
-        return this.duplicateCleaner
+    public getDuplicateCleaner (): DuplicateCleaner {
+      return this.duplicateCleaner
     }
 }
