@@ -5,6 +5,6 @@ export interface Scheduler {
     isProcessing(): boolean
     getIdentifier(): string
     getLastProcessedAt(): Date
-    setIsProcessing(isProcesing: boolean): void
+    setIsProcessing(isProcessing: boolean): void
     getCron(): string
 }

@@ -38,7 +38,7 @@ export class PlatformRepo {
     }
   }
 
-  public async getAllActivePlatformsWithIdentifer (): Promise<PlatSchedConf[]> {
+  public async getAllActivePlatformsWithIdentifier (): Promise<PlatSchedConf[]> {
     const statement = ` SELECT DISTINCT PLATFORM.PLATFORM_ID, 
                                             PLATFORM.NAME, 
                                             PLATFORM.TYPE, 
@@ -60,11 +60,11 @@ export class PlatformRepo {
         }
       })
 
-      // logging.info(NAMESPACE, 'Finished getting all active platforms with identifiers', platSchedConfList)
+      logging.info(NAMESPACE, 'Finished getting all active platforms with identifiers', platSchedConfList)
       return platSchedConfList
     } catch (error) {
-      logging.error(NAMESPACE, 'An error occured while fetching all active platforms with idenfifiers')
-      throw new Error(`An error occured while fetching all active platforms with identifiers ${error}`)
+      logging.error(NAMESPACE, 'An error occurred while fetching all active platforms with idenfifiers')
+      throw new Error(`An error occurred while fetching all active platforms with identifiers ${error}`)
     }
   }
 
@@ -84,11 +84,11 @@ export class PlatformRepo {
         }
       })
 
-      // logging.info(NAMESPACE, 'Finished getting all active platforms', platformList)
+      logging.info(NAMESPACE, 'Finished getting all active platforms', platformList)
       return platformList
     } catch (error) {
-      logging.error(NAMESPACE, 'An error occured while fetching all active platforms')
-      throw new Error(`An error occured while fetching all active platforms ${error}`)
+      logging.error(NAMESPACE, 'An error occurred while fetching all active platforms')
+      throw new Error(`An error occurred while fetching all active platforms ${error}`)
     }
   }
 }

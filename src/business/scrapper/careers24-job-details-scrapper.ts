@@ -1,4 +1,4 @@
-import * as puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer'
 import { JobDetails } from '../../domain/entities/job-details'
 import logging from '../../config/logging'
 

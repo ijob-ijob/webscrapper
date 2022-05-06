@@ -12,48 +12,47 @@ export class SchedulerContainer {
     private duplicateCleanerScheduler: DuplicateCleanerScheduler
     private schedulerReseter: SchedulerReseter
 
-    constructor(private globalContainer: GlobalContainer) {
-        this.init()
+    constructor (private globalContainer: GlobalContainer) {
+      this.init()
     }
 
-    private init() {
-        this.careers24JobStoreImporterScheduler = new Careers24JobStoreImporterScheduler(this.globalContainer)
-        this.careers24JobDetailsImporterScheduler = new Careers24JobDetailsImporterScheduler(this.globalContainer)
-        this.duplicateCleanerScheduler = new DuplicateCleanerScheduler(this.globalContainer)
-        this.schedulerReseter = new SchedulerReseter(this.globalContainer)
+    private init () {
+      this.careers24JobStoreImporterScheduler = new Careers24JobStoreImporterScheduler(this.globalContainer)
+      this.careers24JobDetailsImporterScheduler = new Careers24JobDetailsImporterScheduler(this.globalContainer)
+      this.duplicateCleanerScheduler = new DuplicateCleanerScheduler(this.globalContainer)
+      this.schedulerReseter = new SchedulerReseter(this.globalContainer)
     }
 
-    public reset(resetScheduler: ResetScheduler): void {
-        switch (resetScheduler.identifier) {
-            case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
-                this.careers24JobDetailsImporterScheduler = null
-                this.careers24JobDetailsImporterScheduler = new Careers24JobDetailsImporterScheduler(this.globalContainer)
-                break
-            case SchedulerConfType.DUPLICATECLEANER:
-                this.duplicateCleanerScheduler = null
-                this.duplicateCleanerScheduler = new DuplicateCleanerScheduler(this.globalContainer)
-                break
-            case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
-                this.careers24JobStoreImporterScheduler = null
-                this.careers24JobStoreImporterScheduler = new Careers24JobStoreImporterScheduler(this.globalContainer)
-                break
-
-        }
+    public reset (resetScheduler: ResetScheduler): void {
+      switch (resetScheduler.identifier) {
+        case SchedulerConfType.CAREERS24JONDETAILSRESOLVER:
+          this.careers24JobDetailsImporterScheduler = null
+          this.careers24JobDetailsImporterScheduler = new Careers24JobDetailsImporterScheduler(this.globalContainer)
+          break
+        case SchedulerConfType.DUPLICATECLEANER:
+          this.duplicateCleanerScheduler = null
+          this.duplicateCleanerScheduler = new DuplicateCleanerScheduler(this.globalContainer)
+          break
+        case SchedulerConfType.CAREERS24JOBSTOREIMPORTER:
+          this.careers24JobStoreImporterScheduler = null
+          this.careers24JobStoreImporterScheduler = new Careers24JobStoreImporterScheduler(this.globalContainer)
+          break
+      }
     }
 
-    public getCareers24JobStoreImporterScheduler(): Careers24JobStoreImporterScheduler {
-        return this.careers24JobStoreImporterScheduler
+    public getCareers24JobStoreImporterScheduler (): Careers24JobStoreImporterScheduler {
+      return this.careers24JobStoreImporterScheduler
     }
 
-    public getCareers24JobDetailsImporterScheduler(): Careers24JobDetailsImporterScheduler {
-        return this.careers24JobDetailsImporterScheduler
+    public getCareers24JobDetailsImporterScheduler (): Careers24JobDetailsImporterScheduler {
+      return this.careers24JobDetailsImporterScheduler
     }
 
-    public getDuplicateCleanerScheduler(): DuplicateCleanerScheduler {
-        return this.duplicateCleanerScheduler
+    public getDuplicateCleanerScheduler (): DuplicateCleanerScheduler {
+      return this.duplicateCleanerScheduler
     }
 
-    public getSchedulerReseter(): SchedulerReseter {
-        return this.schedulerReseter
+    public getSchedulerReseter (): SchedulerReseter {
+      return this.schedulerReseter
     }
 }

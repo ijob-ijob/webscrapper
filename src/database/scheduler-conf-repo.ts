@@ -4,9 +4,8 @@ import mysqlPool from './mysql'
 
 const NAMESPACE = 'SchedulerConfRepo'
 export class SchedulerConfRepo {
-
-    public async getActiveSchedularConf(): Promise<SchedulerConfPlatform[]> {
-        const statement = `select
+  public async getActiveSchedularConf (): Promise<SchedulerConfPlatform[]> {
+    const statement = `select
                                 SCHEDULER_CONF_ID, 
                                 CRON, 
                                 SCHEDULER_CONF.PLATFORM_ID, 
@@ -21,28 +20,30 @@ export class SchedulerConfRepo {
                           where SCHEDULER_CONF.SUPPORTED_TO is null 
                           and PLATFORM.SUPPORTED_TO is null`
 
-        try {
-            const rows = await mysqlPool.query(statement)
-            const schedularConfPlatformDbList: SchedulerConfPlatformDb[] = <SchedulerConfPlatformDb[]>rows[0]
-            const schedulerConfList: SchedulerConfPlatform[] = schedularConfPlatformDbList.map((schedularConfPlatfromDb) => {
-                return {
-                    schedulerConfId: schedularConfPlatfromDb.SCHEDULER_CONF_ID,
-                    cron: schedularConfPlatfromDb.CRON,
-                    platformId: schedularConfPlatfromDb.PLATFORM_ID,
-                    supportedFrom: schedularConfPlatfromDb.SUPPORTED_FROM,
-                    supportedTo: schedularConfPlatfromDb.SUPPORTED_TO,
-                    description: schedularConfPlatfromDb.DESCRIPTION,
-                    type: schedularConfPlatfromDb.TYPE,
-                    name: schedularConfPlatfromDb.NAME,
-                    identifier: schedularConfPlatfromDb.IDENTIFIER
-                }
-            })
+    const schedulerConfList: SchedulerConfPlatform[] = []
 
-            logging.info(NAMESPACE, 'Finished getting all active scheduler config')
-            return schedulerConfList
-        } catch (error) {
-            logging.error(NAMESPACE, 'An error occured while getting all scheduler conf', error)
-            throw error
+    await mysqlPool.query(statement).then((rows) => {
+      const schedularConfPlatformDbList: SchedulerConfPlatformDb[] = <SchedulerConfPlatformDb[]>rows[0]
+      const results = schedularConfPlatformDbList.map((schedularConfPlatformDb) => {
+        return {
+          schedulerConfId: schedularConfPlatformDb.SCHEDULER_CONF_ID,
+          cron: schedularConfPlatformDb.CRON,
+          platformId: schedularConfPlatformDb.PLATFORM_ID,
+          supportedFrom: schedularConfPlatformDb.SUPPORTED_FROM,
+          supportedTo: schedularConfPlatformDb.SUPPORTED_TO,
+          description: schedularConfPlatformDb.DESCRIPTION,
+          type: schedularConfPlatformDb.TYPE,
+          name: schedularConfPlatformDb.NAME,
+          identifier: schedularConfPlatformDb.IDENTIFIER
         }
-    }
+      })
+      schedulerConfList.push(...results)
+    }).catch((error) => {
+      logging.error(NAMESPACE, 'An error occurred while getting all scheduler conf', error)
+      return new Promise((resolve, reject) => reject(new Error(`An error occurred while getting all scheduler conf::${error}`)))
+    })
+
+    logging.info(NAMESPACE, 'Finished getting all active scheduler config')
+    return new Promise((resolve) => resolve(schedulerConfList))
+  }
 }
