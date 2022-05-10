@@ -40,7 +40,8 @@ export class JobStoreSaver {
             [link,
               JSON.stringify({ link: link }),
               platformId,
-              JobStoreStatusType.NOT_PROCESSED
+              JobStoreStatusType.NOT_PROCESSED,
+              new Date().toJSON().slice(0, 19).replace('T', ' ')
             ]
           )
         })

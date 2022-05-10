@@ -59,7 +59,7 @@ export class JobStoreRepo {
   }
 
   public async saveJobStore (jobStoreList: any): Promise<void> {
-    const statement = 'insert into JOB_STORE (link, data, platform_id, status) values ?'
+    const statement = 'insert into JOB_STORE (link, data, platform_id, status, created_at) values ?'
 
     try {
       await mysqlPool.query(statement, [jobStoreList])
