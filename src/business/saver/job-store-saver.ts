@@ -32,6 +32,7 @@ export class JobStoreSaver {
 
     let isDuplicateError: boolean = false
 
+    const date: string = new Date().toJSON().slice(0, 19).replace('T', ' ');
     do {
       if (newLinksList.length > 0) {
         const jobStoreList: any[] = []
@@ -41,7 +42,7 @@ export class JobStoreSaver {
               JSON.stringify({ link: link }),
               platformId,
               JobStoreStatusType.NOT_PROCESSED,
-              new Date().toJSON().slice(0, 19).replace('T', ' ')
+              date
             ]
           )
         })
