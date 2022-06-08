@@ -1,9 +1,10 @@
 import * as express from 'express'
 import { SchedulerBuilder } from './business/scheduler/scheduler-builder'
 import { GlobalContainer } from './container/global-container'
+import config from './config/config'
 
 const app = express()
-const port = 3000
+const port = config.server.port
 
 const globalContainer: GlobalContainer = new GlobalContainer()
 const schedulerBuilder: SchedulerBuilder = new SchedulerBuilder(globalContainer)
