@@ -34,8 +34,10 @@ export class Careers24JobStoreScrapper {
 
           const nextPageClickSelector = 'li.page-item:nth-child(6) > a:nth-child(1)'
 
-          await page.waitForXPath('/html/body/section/section/main/div[4]/div[3]/div[2]/div[4]/nav/ul/li[6]/a')
-          await page.click(nextPageClickSelector)
+          await page.evaluate((selector) => {
+            return document.querySelector(selector).click()
+          }, nextPageClickSelector)
+
         }
         await page.close()
         await browser.close()
